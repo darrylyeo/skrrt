@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {
-		then,
+		derive,
 		catchError,
 		race,
 		all,
@@ -76,7 +76,7 @@
 				{@const conversionMetric = getMetric('conversion')}
 				{@const allMetricResources = [revenueMetric, ordersMetric, customersMetric, conversionMetric]}
 				{@const allMetrics = all(allMetricResources)}
-				{@const metricsDisplay = then(allMetrics, ([revenue, orders, customers, conversion]) => ({
+				{@const metricsDisplay = derive(allMetrics, ([revenue, orders, customers, conversion]) => ({
 					revenue: `$${revenue.value.toLocaleString()}`,
 					orders: orders.value.toString(),
 					customers: customers.value.toString(),
@@ -320,8 +320,8 @@
 			<Boundary>
 				{@const selectedCustomer = getCustomer(1)}
 				{@const customerOrdersChained = chain(selectedCustomer, customer => getCustomerOrders(customer.id))}
-				{@const customerOrderCount = then(customerOrdersChained, orders => orders.length)}
-				{@const customerTotalSpent = then(customerOrdersChained, orders => orders.reduce((sum, o) => sum + o.total, 0))}
+				{@const customerOrderCount = derive(customerOrdersChained, orders => orders.length)}
+				{@const customerTotalSpent = derive(customerOrdersChained, orders => orders.reduce((sum, o) => sum + o.total, 0))}
 				{@const refresh = () => selectedCustomer.refresh()}
 				<div class="card-header">
 					<h2>chain()</h2>
@@ -393,10 +393,10 @@
 		<section class="card">
 			<Boundary>
 				{@const vipCustomerResources = [6, 7, 8, 9, 10].map(id => getCustomer(id))}
-				{@const vipCustomerSummary = then(filter(vipCustomerResources, (c) => c.totalSpent > 1000), (customers) => customers.map(c => c.name))}
+				{@const vipCustomerSummary = derive(filter(vipCustomerResources, (c) => c.totalSpent > 1000), (customers) => customers.map(c => c.name))}
 				{@const refresh = () => vipCustomerResources.forEach(c => c.refresh())}
 				<div class="card-header">
-					<h2>filter() + then()</h2>
+					<h2>filter() + derive()</h2>
 					<span class="helper-tag">Composition</span>
 					{#if vipCustomerSummary.loading}
 						<button class="status-mini status-loading" onclick={refresh} aria-label="Loading"><span class="spinner"></span></button>
@@ -426,7 +426,7 @@
 	<section class="helper-legend">
 		<h2>Helpers Used</h2>
 		<div class="legend-grid">
-			<div class="legend-item"><code>then</code> Transform values</div>
+			<div class="legend-item"><code>derive</code> Transform values</div>
 			<div class="legend-item"><code>catchError</code> Error fallbacks</div>
 			<div class="legend-item"><code>race</code> First to complete</div>
 			<div class="legend-item"><code>all</code> Combine resources</div>
@@ -492,6 +492,50 @@
 		background: var(--bg-tertiary);
 		border-radius: 4px;
 		color: var(--text-muted);
+		margin-right: auto;
+	}
+
+	.status-mini {
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		display: grid;
+		place-items: center;
+		font-size: 0.9rem;
+		background: var(--bg-tertiary);
+		color: var(--text-secondary);
+		transition: background 0.15s, transform 0.15s;
+	}
+
+	.status-mini:hover {
+		background: var(--bg-primary);
+		transform: scale(1.1);
+	}
+
+	.status-mini.status-loading {
+		pointer-events: none;
+	}
+
+	.status-mini.status-success {
+		color: var(--success);
+	}
+
+	.status-mini .spinner {
+		width: 12px;
+		height: 12px;
+		border: 2px solid var(--border-color);
+		border-top-color: var(--accent-primary);
+		border-radius: 50%;
+		animation: spin 0.8s linear infinite;
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	.card-desc {

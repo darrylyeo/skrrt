@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { then } from '$lib/RemoteResource.svelte'
+	import { derive } from '$lib/RemoteResource.svelte'
 	import { getUsers } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
 
-<PageBoundary title="then()">
+<PageBoundary title="derive()">
 	{@const users = getUsers()}
-	{@const userNames = then(users, users => users.map(u => u.name))}
-	{@const userCount = then(users, users => users.length)}
-	{@const firstUser = then(users, users => users[0])}
+	{@const userNames = derive(users, users => users.map(u => u.name))}
+	{@const userCount = derive(users, users => users.length)}
+	{@const firstUser = derive(users, users => users[0])}
 
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
 		<header class="page-header">
-			<h1 class="page-title">then()</h1>
+			<h1 class="page-title">derive()</h1>
 			<p class="page-description">
 				Transforms the value of a RemoteResource when it becomes ready.
 				Equivalent to <code>Promise.prototype.then</code>.
@@ -24,12 +24,12 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { then } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { derive } from '$lib/RemoteResource.svelte'
 
 const users = getUsers()
-const userNames = then(users, users => users.map(u => u.name))
-const userCount = then(users, users => users.length)
-const firstUser = then(users, users => users[0])`}</code></pre>
+const userNames = derive(users, users => users.map(u => u.name))
+const userCount = derive(users, users => users.length)
+const firstUser = derive(users, users => users[0])`}</code></pre>
 			</div>
 		</section>
 

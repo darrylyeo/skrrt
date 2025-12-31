@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { withDefault, then } from '$lib/RemoteResource.svelte'
+	import { withDefault, derive } from '$lib/RemoteResource.svelte'
 	import { getUsers, getPrices } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
@@ -9,7 +9,7 @@
 	{@const usersWithDefault = withDefault(users, [])}
 	{@const prices = getPrices()}
 	{@const pricesWithDefault = withDefault(prices, [0])}
-	{@const total = then(pricesWithDefault, ps => ps.reduce((a, b) => a + b, 0))}
+	{@const total = derive(pricesWithDefault, ps => ps.reduce((a, b) => a + b, 0))}
 
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>

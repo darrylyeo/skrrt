@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { chain, then } from '$lib/RemoteResource.svelte'
+	import { chain, derive } from '$lib/RemoteResource.svelte'
 	import { getUsers, getPosts } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
 
 <PageBoundary title="chain()">
 	{@const users = getUsers()}
-	{@const firstUser = then(users, users => users[0])}
+	{@const firstUser = derive(users, users => users[0])}
 	{@const firstUserPosts = chain(users, users => getPosts(users[0].id))}
 	{@const secondUserPosts = chain(users, users => getPosts(users[1]?.id ?? 1))}
 
@@ -24,7 +24,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { chain } from '$lib/RemoteResource.svelte'
+			<pre><code>{`import { chain } from '$lib/RemoteResource.svelte'
 
 // First get users, then get posts for the first user
 const firstUserPosts = chain(
@@ -33,7 +33,7 @@ const firstUserPosts = chain(
 )
 // Automatically chains: users are fetched first,
 // then posts are fetched using the first user's ID`}</code></pre>
-			</div>
+		</div>
 		</section>
 
 		<section class="section">

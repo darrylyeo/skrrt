@@ -187,11 +187,11 @@
 
 		<h3>Data-First API</h3>
 		<div class="code-block">
-			<pre><code>{`import { then, all, map, filter } from '$lib/RemoteResource.svelte'
+			<pre><code>{`import { derive, all, map, filter } from '$lib/RemoteResource.svelte'
 import { getUsers, getPosts } from './demo.remote'
 
 // Transform a single resource
-const userNames = then(getUsers(), users => users.map(u => u.name))
+const userNames = derive(getUsers(), users => users.map(u => u.name))
 
 // Combine multiple resources
 const data = all([getUsers(), getPosts(1)])

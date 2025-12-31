@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { map, reduce, then } from '$lib/RemoteResource.svelte'
+	import { map, reduce, derive } from '$lib/RemoteResource.svelte'
 	import {
 		getRandomNumberById,
 		getFlakyData,
@@ -38,11 +38,11 @@
 		return {
 			id,
 			user,
-			userName: then(user, u => u.name),
+			userName: derive(user, u => u.name),
 			posts,
-			postCount: then(posts, p => p.length),
+			postCount: derive(posts, p => p.length),
 			price,
-			priceFormatted: then(price, p => `$${p.toFixed(2)}`),
+			priceFormatted: derive(price, p => `$${p.toFixed(2)}`),
 			score,
 			status
 		}
@@ -136,7 +136,7 @@
 	const tableTotalPosts = $derived(reduce(tableRows.map(r => r.postCount), (sum, c) => sum + c, 0))
 	const tableTotalPrice = $derived(reduce(tableRows.map(r => r.price), (sum, p) => sum + p, 0))
 	const tableAvgScore = $derived(
-		then(
+		derive(
 			reduce(tableRows.map(r => r.score), (sum, s) => sum + s.value, 0),
 			sum => tableRows.length > 0 ? Math.round(sum / tableRows.length) : 0
 		)

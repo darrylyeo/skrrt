@@ -76,14 +76,14 @@ export function pipe(
 // ============================================================================
 
 /**
- * Pipeable version of then - transforms the value when ready.
+ * Pipeable version of derive - transforms the value when ready.
  */
 export const map = <_Value, _Result>(
 	transform: (value: _Value) => _Result
 ) => (
 	resource: RemoteResource<_Value>
 ): RemoteResource<_Result> =>
-	RR.then(resource, transform)
+	RR.derive(resource, transform)
 
 /**
  * Pipeable version of catchError - provides fallback on error.
@@ -340,7 +340,7 @@ export const combineWith = <_Resources extends readonly RemoteResource<unknown>[
 	resources: _Resources,
 	transform: (values: { [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? _Value : never }) => _Result
 ): RemoteResource<_Result> =>
-	RR.then(RR.all(resources), transform)
+	RR.derive(RR.all(resources), transform)
 
 /**
  * Creates a reactive tuple from multiple independent RemoteResources.
@@ -379,7 +379,7 @@ export const when = <_Value>(
 ) => (
 	resource: RemoteResource<_Value>
 ): RemoteResource<_Value> =>
-	RR.then(resource, v => predicate(v) ? transform(v) : v)
+	RR.derive(resource, v => predicate(v) ? transform(v) : v)
 
 /**
  * Taps into a resource without transforming it.
@@ -390,7 +390,7 @@ export const tap = <_Value>(
 ) => (
 	resource: RemoteResource<_Value>
 ): RemoteResource<_Value> =>
-	RR.then(resource, value => { effect(value); return value })
+	RR.derive(resource, value => { effect(value); return value })
 
 /**
  * Applies a fallback resource if the primary errors.

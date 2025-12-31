@@ -8,8 +8,9 @@ import { tick } from 'svelte'
 
 /**
  * Transforms the value of a RemoteResource when it becomes ready.
+ * Named `derive` instead of `then` to avoid module thenable detection issues during SSR.
  */
-export const then = <_Value, _Result>(
+export const derive = <_Value, _Result>(
 	resource: RemoteResource<_Value>,
 	transform: (value: _Value) => Awaited<_Result>
 ): RemoteResource<_Result> => {
@@ -17,19 +18,13 @@ export const then = <_Value, _Result>(
 		resource.ready ? transform(resource.current) : undefined
 	)
 
-	const then = $derived.by(() => {
-		const promise = resource.then()
+	const promise = $derived(
+		resource
+			.then(tick)
+			.then(() => current as Awaited<_Result>)
+	)
 
-		return ((resolve?: (v: _Result) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current as Awaited<_Result>
-			})
-
-			return resolve || reject ? result.then(resolve, reject) : result
-		}) as Promise<Awaited<_Result>>['then']
-	})
-
+	// @ts-expect-error current
 	return {
 		get current() {
 			return current
@@ -48,30 +43,19 @@ export const then = <_Value, _Result>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Result>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 export const _then = <_Value, _Result>(
@@ -82,45 +66,13 @@ export const _then = <_Value, _Result>(
 		resource.ready ? { current: transform(resource.current), ready: true } as const : { current: undefined, ready: false } as const
 	)
 
-	// const then = $derived.by(() => {
-	// 	const promise = resource.then()
+	const promise = $derived(
+		resource
+			.then(tick)
+			.then(() => currentAndReady.current as Awaited<_Result>)
+	)
 
-	// 	const getResult = async () => {
-	// 		await promise
-	// 		await tick()
-	// 		return currentAndReady.current as Awaited<_Result>
-	// 	}
-
-	// 	function thenFn<TResult1 = Awaited<_Result>, TResult2 = never>(
-	// 		onfulfilled?: ((value: Awaited<_Result>) => TResult1 | PromiseLike<TResult1>) | null,
-	// 		onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
-	// 	): Promise<TResult1 | TResult2>
-	// 	function thenFn(
-	// 		onfulfilled?: ((value: Awaited<_Result>) => unknown) | null,
-	// 		onrejected?: ((reason: any) => unknown) | null
-	// 	) {
-	// 		const result = getResult()
-	// 		return onfulfilled || onrejected
-	// 			? result.then(onfulfilled, onrejected)
-	// 			: result
-	// 	}
-
-	// 	return thenFn
-
-	// 	return getResult().then
-	// }
-
-	const then = $derived.by(() => {
-		const promise = (
-			resource
-				.then(tick)
-				.then(() => currentAndReady.current as Awaited<_Result>)
-		)
-
-		return promise.then.bind(promise)
-	})
-
-	// @ts-expect-error 
+	// @ts-expect-error
 	return {
 		get current() {
 			return currentAndReady.current
@@ -137,30 +89,17 @@ export const _then = <_Value, _Result>(
 		get ready() {
 			return currentAndReady.ready
 		},
-		// ...currentAndReady,
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) =>
-				then(undefined, reject ?? undefined)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
+			return promise.finally.bind(promise)
 		},
 
 		[Symbol.toStringTag]: 'RemoteResource',
@@ -182,27 +121,15 @@ export const catchError = <_Value>(
 		resource.ready || !!resource.error
 	)
 
-	const then = $derived.by(() => {
-		const promise = (
-			resource
-				.then()
-				.then(() => {}, () => {})
-		)
-
-		return (
-			(resolve?: (v: _Value) => unknown,
-			reject?: (e: unknown) => unknown
-		) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current as _Value
-			})
-
-			return resolve || reject ? result.then(resolve, reject) : result
-		}) as Promise<_Value>['then']
-	})
+	const promise = $derived(
+		resource
+			.then(() => {}, () => {})
+			.then(tick)
+			.then(() => current as Awaited<_Value>)
+	)
 
 	return {
+		// @ts-expect-error current
 		get current() {
 			return current
 		},
@@ -220,30 +147,19 @@ export const catchError = <_Value>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Value>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 /**
@@ -270,20 +186,13 @@ export const race = <_Value>(resources: RemoteResource<_Value>[]): RemoteResourc
 		!winner && resources.some(resource => resource.loading)
 	)
 
-	const then = $derived.by(() => {
-		const promise = Promise.race(resources)
+	const promise = $derived(
+		Promise.race(resources)
+			.then(tick)
+			.then(() => current as Awaited<_Value>)
+	)
 
-		return ((resolve?: (v: _Value) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-
-				return current as _Value
-			})
-
-			return resolve || reject ? result.then(resolve, reject) : result
-		}) as Promise<_Value>['then']
-	})
-
+	// @ts-expect-error current
 	return {
 		get current() {
 			return current
@@ -302,30 +211,19 @@ export const race = <_Value>(resources: RemoteResource<_Value>[]): RemoteResourc
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Value>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 /**
@@ -334,14 +232,14 @@ export const race = <_Value>(resources: RemoteResource<_Value>[]): RemoteResourc
 export const all = <_Resources extends readonly RemoteResource<unknown>[]>(
 	resources: _Resources
 ): RemoteResource<{ [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? _Value : never }> => {
-	type _Result = { [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? _Value : never }
+	type _Result = Awaited<{ [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? _Value : never }>
 
 	const ready = $derived(
 		resources.every(resource => resource.ready)
 	)
 
 	const current = $derived(
-		ready ? resources.map(resource => resource.current) as _Result : undefined
+		ready ? resources.map(resource => resource.current) as unknown as _Result : undefined
 	)
 
 	const loading = $derived(
@@ -356,19 +254,13 @@ export const all = <_Resources extends readonly RemoteResource<unknown>[]>(
 		errors.length > 0 ? errors : undefined
 	)
 
-	const then = $derived.by(() => {
-		const promise = Promise.all(resources)
+	const promise = $derived(
+		Promise.all(resources)
+			.then(tick)
+			.then(() => current as _Result)
+	)
 
-		return ((resolve?: (v: _Result) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current as _Result
-			})
-
-			return resolve || reject ? result.then(resolve, reject) : result
-		}) as Promise<_Result>['then']
-	})
-
+	// @ts-expect-error
 	return {
 		get current() {
 			return current
@@ -387,30 +279,19 @@ export const all = <_Resources extends readonly RemoteResource<unknown>[]>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Result>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 /**
@@ -425,8 +306,8 @@ export type SettledResult<_Value> =
  */
 export const allSettled = <_Resources extends readonly RemoteResource<unknown>[]>(
 	resources: _Resources
-): RemoteResource<{ [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? SettledResult<_Value> : never }> => {
-	type _Result = { [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? SettledResult<_Value> : never }
+): RemoteResource<{ [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? SettledResult<Awaited<_Value>> : never }> => {
+	type _Result = Awaited<{ [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? SettledResult<Awaited<_Value>> : never }>
 
 	const ready = $derived(
 		resources.every(resource => resource.ready || resource.error)
@@ -437,7 +318,7 @@ export const allSettled = <_Resources extends readonly RemoteResource<unknown>[]
 			? resources.map(resource => resource.error
 				? { ready: false as const, current: undefined, error: resource.error }
 				: { ready: true as const, current: resource.current, error: undefined }
-			) as _Result
+			) as unknown as _Result
 			: undefined
 	)
 
@@ -445,24 +326,13 @@ export const allSettled = <_Resources extends readonly RemoteResource<unknown>[]
 		resources.some(resource => resource.loading)
 	)
 
-	const then = $derived.by(() => {
-		const promise = Promise.allSettled(resources)
+	const promise = $derived(
+		Promise.allSettled(resources)
+			.then(tick)
+			.then(() => current as _Result)
+	)
 
-		return ((resolve?: (v: _Result) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current as _Result
-			})
-
-			return (
-				resolve || reject ?
-					result.then(resolve, reject)
-				:
-					result
-			)
-		}) as Promise<_Result>['then']
-	})
-
+	// @ts-expect-error
 	return {
 		get current() {
 			return current
@@ -481,30 +351,19 @@ export const allSettled = <_Resources extends readonly RemoteResource<unknown>[]
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Result>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 // ============================================================================
@@ -542,23 +401,13 @@ export const map = <_Value, _Result>(
 		errors.length > 0 ? errors : undefined
 	)
 
-	const then = $derived.by(() => {
-		const promise = Promise.all(resources)
-		return ((resolve?: (v: _Result[]) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current
-			})
+	const promise = $derived(
+		Promise.all(resources)
+			.then(tick)
+			.then(() => current)
+	)
 
-			return (
-				resolve || reject ?
-					result.then(resolve, reject)
-				:
-					result
-			)
-		}) as Promise<_Result[]>['then']
-	})
-
+	// @ts-expect-error current
 	return {
 		get current() {
 			return current
@@ -577,30 +426,19 @@ export const map = <_Value, _Result>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Result[]>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 /**
@@ -635,24 +473,13 @@ export const filter = <_Value>(
 		errors.length > 0 ? errors : undefined
 	)
 
-	const then = $derived.by(() => {
-		const promise = Promise.all(resources)
+	const promise = $derived(
+		Promise.all(resources)
+			.then(tick)
+			.then(() => current)
+	)
 
-		return ((resolve?: (v: _Value[]) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current
-			})
-
-			return (
-				resolve || reject ?
-					result.then(resolve, reject)
-				:
-					result
-			)
-		}) as Promise<_Value[]>['then']
-	})
-
+	// @ts-expect-error current
 	return {
 		get current() {
 			return current
@@ -671,30 +498,19 @@ export const filter = <_Value>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Value[]>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 /**
@@ -729,25 +545,14 @@ export const reduce = <_Value, _Accumulator>(
 		errors.length > 0 ? errors : undefined
 	)
 
-	const then = $derived.by(() => {
-		const promise = Promise.all(resources)
-
-		return ((resolve?: (v: _Accumulator) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current
-			})
-
-			return (
-				resolve || reject ?
-					result.then(resolve, reject)
-				:
-					result
-			)
-		}) as Promise<_Accumulator>['then']
-	})
+	const promise = $derived(
+		Promise.all(resources)
+			.then(tick)
+			.then(() => current as Awaited<_Accumulator>)
+	)
 
 	return {
+		// @ts-expect-error current
 		get current() {
 			return current
 		},
@@ -765,30 +570,19 @@ export const reduce = <_Value, _Accumulator>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Accumulator>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 /**
@@ -822,24 +616,13 @@ export const flatMap = <_Value, _Result>(
 		errors.length > 0 ? errors : undefined
 	)
 
-	const then = $derived.by(() => {
-		const promise = Promise.all(resources)
+	const promise = $derived(
+		Promise.all(resources)
+			.then(tick)
+			.then(() => current)
+	)
 
-		return ((resolve?: (v: _Result[]) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current
-			})
-
-			return (
-				resolve || reject ?
-					result.then(resolve, reject)
-				:
-					result
-			)
-		}) as Promise<_Result[]>['then']
-	})
-
+	// @ts-expect-error current
 	return {
 		get current() {
 			return current
@@ -858,30 +641,19 @@ export const flatMap = <_Value, _Result>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Result[]>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 // ============================================================================
@@ -907,25 +679,15 @@ export const transform = <_Value, _Result>(
 		resource.ready || !!resource.error
 	)
 
-	const then = $derived.by(() => {
-		const promise = resource.then().then(() => {}, () => {})
-
-		return ((resolve?: (v: _Result) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current as _Result
-			})
-
-			return (
-				resolve || reject ?
-					result.then(resolve, reject)
-				:
-					result
-			)
-		}) as Promise<_Result>['then']
-	})
+	const promise = $derived(
+		resource
+			.then(() => {}, () => {})
+			.then(tick)
+			.then(() => current as Awaited<_Result>)
+	)
 
 	return {
+		// @ts-expect-error current
 		get current() {
 			return current
 		},
@@ -943,30 +705,19 @@ export const transform = <_Value, _Result>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Result>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 /**
@@ -980,22 +731,13 @@ export const withDefault = <_Value>(
 		resource.ready ? resource.current : defaultValue
 	)
 
-	const then = $derived.by(() => {
-		current
-
-		return ((resolve?: (v: _Value) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = tick().then(() => current)
-
-			return (
-				resolve || reject ?
-					result.then(resolve, reject)
-				:
-					result
-			)
-		}) as Promise<_Value>['then']
-	})
+	const promise = $derived(
+		tick()
+			.then(() => current as Awaited<_Value>)
+	)
 
 	return {
+		// @ts-expect-error current
 		get current() {
 			return current
 		},
@@ -1013,30 +755,19 @@ export const withDefault = <_Value>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Value>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }
 
 /**
@@ -1066,24 +797,14 @@ export const chain = <_Value, _Result>(
 		resource.error ?? nextResource?.error
 	)
 
-	const then = $derived.by(() => {
-		const promise = resource.then().then(value => getNextResource(value))
+	const promise = $derived(
+		resource
+			.then(value => getNextResource(value))
+			.then(tick)
+			.then(() => current as Awaited<_Result>)
+	)
 
-		return ((resolve?: (v: _Result) => unknown, reject?: (e: unknown) => unknown) => {
-			const result = promise.then(async () => {
-				await tick()
-				return current as _Result
-			})
-
-			return (
-				resolve || reject ?
-					result.then(resolve, reject)
-				:
-					result
-			)
-		}) as Promise<_Result>['then']
-	})
-
+	// @ts-expect-error current
 	return {
 		get current() {
 			return current
@@ -1102,28 +823,17 @@ export const chain = <_Value, _Result>(
 		},
 
 		get then() {
-			return then
+			return promise.then.bind(promise)
 		},
 
 		get catch() {
-			return (reject: any) => (
-				then(undefined, reject ?? undefined)
-			)
+			return promise.catch.bind(promise)
 		},
 
 		get finally() {
-			return (fn?: () => void) => (
-				then(
-					value => {
-						fn?.()
-						return value
-					},
-					error => {
-						fn?.()
-						throw error
-					}
-				)
-			)
-		}
-	} as RemoteResource<_Result>
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
 }

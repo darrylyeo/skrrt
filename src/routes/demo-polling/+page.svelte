@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { then, all, reduce } from '$lib/RemoteResource.svelte'
+	import { derive, all, reduce } from '$lib/RemoteResource.svelte'
 	import { getPollingData, getRandomStock } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 
@@ -33,7 +33,7 @@
 	)
 
 	const pollingStatus = $derived(
-		then(pollingResource, data => data.status)
+		derive(pollingResource, data => data.status)
 	)
 
 	const refreshStocks = () => {
