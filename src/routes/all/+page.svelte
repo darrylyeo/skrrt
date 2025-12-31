@@ -1,21 +1,15 @@
 <script lang="ts">
 	import { all } from '$lib/RemoteResource.svelte'
 	import { getUsers, getProducts, getStocks } from '../demo.remote'
-
-	const usersQuery = getUsers()
-	const productsQuery = getProducts()
-	const stocksQuery = getStocks()
-
-	const combined = all([usersQuery, productsQuery, stocksQuery])
-
-	const refresh = () => {
-		usersQuery.refresh()
-		productsQuery.refresh()
-		stocksQuery.refresh()
-	}
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
 
-<svelte:boundary>
+<PageBoundary title="all()">
+	{@const usersQuery = getUsers()}
+	{@const productsQuery = getProducts()}
+	{@const stocksQuery = getStocks()}
+	{@const combined = all([usersQuery, productsQuery, stocksQuery])}
+
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -41,11 +35,11 @@ const combined = all([getUsers(), getProducts(), getStocks()])
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if combined.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Waiting for all...</button>
+					<button class="status status-loading" onclick={() => { usersQuery.refresh(); productsQuery.refresh(); stocksQuery.refresh() }}><span class="spinner"></span> Waiting for all...</button>
 				{:else if combined.error}
-					<button class="status status-error" onclick={refresh}>↻ Error</button>
+					<button class="status status-error" onclick={() => { usersQuery.refresh(); productsQuery.refresh(); stocksQuery.refresh() }}>↻ Error</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ All Ready</button>
+					<button class="status status-success" onclick={() => { usersQuery.refresh(); productsQuery.refresh(); stocksQuery.refresh() }}>↻ All Ready</button>
 				{/if}
 			</div>
 
@@ -117,15 +111,4 @@ const combined = all([getUsers(), getProducts(), getStocks()])
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">all()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>

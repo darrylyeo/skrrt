@@ -1,17 +1,15 @@
 <script lang="ts">
 	import { filter } from '$lib/RemoteResource.svelte'
 	import { getUser } from '../demo.remote'
-
-	const users = [getUser(1), getUser(2), getUser(3), getUser(4), getUser(5)]
-
-	const activeUsers = filter(users, u => u.active)
-	const inactiveUsers = filter(users, u => !u.active)
-	const emailContainsA = filter(users, u => u.email.includes('a'))
-
-	const refresh = () => users.forEach(u => u.refresh())
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
 
-<svelte:boundary>
+<PageBoundary title="filter()">
+	{@const users = [getUser(1), getUser(2), getUser(3), getUser(4), getUser(5)]}
+	{@const activeUsers = filter(users, u => u.active)}
+	{@const inactiveUsers = filter(users, u => !u.active)}
+	{@const emailContainsA = filter(users, u => u.email.includes('a'))}
+
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -39,9 +37,9 @@ const inactiveUsers = filter(users, u => !u.active)`}</code></pre>
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if activeUsers.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Loading</button>
+					<button class="status status-loading" onclick={() => users.forEach(u => u.refresh())}><span class="spinner"></span> Loading</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ Refresh</button>
+					<button class="status status-success" onclick={() => users.forEach(u => u.refresh())}>↻ Refresh</button>
 				{/if}
 			</div>
 
@@ -99,15 +97,4 @@ const inactiveUsers = filter(users, u => !u.active)`}</code></pre>
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">filter()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>

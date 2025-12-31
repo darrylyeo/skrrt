@@ -174,18 +174,18 @@
 </script>
 
 <PageBoundary title="Datagrid: Reactive Table">
-<div class="page" style="max-width: 1400px;">
-	<a href="/" class="page-back">← Back to Home</a>
+	<div class="page" style="max-width: 1400px;">
+		<a href="/" class="page-back">← Back to Home</a>
 
-	<header class="page-header">
-		<h1 class="page-title">Datagrid: Reactive Table</h1>
-		<p class="page-description">
-			Each row joins data from multiple independent queries. Cells update reactively as their source resolves.
-			This demonstrates composing helpers like a database join.
-		</p>
-	</header>
+		<header class="page-header">
+			<h1 class="page-title">Datagrid: Reactive Table</h1>
+			<p class="page-description">
+				Each row joins data from multiple independent queries. Cells update reactively as their source resolves.
+				This demonstrates composing helpers like a database join.
+			</p>
+		</header>
 
-	<div class="controls">
+		<div class="controls">
 		<div class="count-controls">
 			<label>
 				<span>Rows:</span>
@@ -327,8 +327,8 @@
 				{/each}
 			</tbody>
 		</table>
+		</div>
 	</div>
-</div>
 </PageBoundary>
 
 <style>

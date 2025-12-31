@@ -1,21 +1,15 @@
 <script lang="ts">
 	import { race } from '$lib/RemoteResource.svelte'
 	import { getFast, getMedium, getSlow } from '../demo.remote'
-
-	const fast = getFast()
-	const medium = getMedium()
-	const slow = getSlow()
-
-	const winner = race([fast, medium, slow])
-
-	const refresh = () => {
-		fast.refresh()
-		medium.refresh()
-		slow.refresh()
-	}
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
 
-<svelte:boundary>
+<PageBoundary title="race()">
+	{@const fast = getFast()}
+	{@const medium = getMedium()}
+	{@const slow = getSlow()}
+	{@const winner = race([fast, medium, slow])}
+
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -41,9 +35,9 @@ const winner = race([getFast(), getMedium(), getSlow()])
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if winner.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Racing...</button>
+					<button class="status status-loading" onclick={() => { fast.refresh(); medium.refresh(); slow.refresh() }}><span class="spinner"></span> Racing...</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ Winner!</button>
+					<button class="status status-success" onclick={() => { fast.refresh(); medium.refresh(); slow.refresh() }}>↻ Winner!</button>
 				{/if}
 			</div>
 
@@ -94,15 +88,4 @@ const winner = race([getFast(), getMedium(), getSlow()])
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">race()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>

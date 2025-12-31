@@ -1,21 +1,16 @@
 <script lang="ts">
 	import { map } from '$lib/RemoteResource.svelte'
 	import { getUser, getPrice } from '../demo.remote'
-
-	const users = [getUser(1), getUser(2), getUser(3)]
-	const prices = [getPrice(0), getPrice(1), getPrice(2), getPrice(3)]
-
-	const userNames = map(users, u => u.name)
-	const userEmails = map(users, u => u.email)
-	const formattedPrices = map(prices, p => `$${p.toFixed(2)}`)
-
-	const refresh = () => {
-		users.forEach(u => u.refresh())
-		prices.forEach(p => p.refresh())
-	}
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
 
-<svelte:boundary>
+<PageBoundary title="map()">
+	{@const users = [getUser(1), getUser(2), getUser(3)]}
+	{@const prices = [getPrice(0), getPrice(1), getPrice(2), getPrice(3)]}
+	{@const userNames = map(users, u => u.name)}
+	{@const userEmails = map(users, u => u.email)}
+	{@const formattedPrices = map(prices, p => `$${p.toFixed(2)}`)}
+
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -44,9 +39,9 @@ const formattedPrices = map(prices, p => \`$\${p.toFixed(2)}\`)`}</code></pre>
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if userNames.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Loading</button>
+					<button class="status status-loading" onclick={() => { users.forEach(u => u.refresh()); prices.forEach(p => p.refresh()) }}><span class="spinner"></span> Loading</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ Refresh</button>
+					<button class="status status-success" onclick={() => { users.forEach(u => u.refresh()); prices.forEach(p => p.refresh()) }}>↻ Refresh</button>
 				{/if}
 			</div>
 
@@ -96,15 +91,4 @@ const formattedPrices = map(prices, p => \`$\${p.toFixed(2)}\`)`}</code></pre>
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">map()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>

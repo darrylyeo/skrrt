@@ -1,27 +1,21 @@
 <script lang="ts">
 	import { reduce } from '$lib/RemoteResource.svelte'
 	import { getPrice, getUser } from '../demo.remote'
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
+</script>
 
-	const prices = [getPrice(0), getPrice(1), getPrice(2), getPrice(3), getPrice(4)]
-	const users = [getUser(1), getUser(2), getUser(3), getUser(4), getUser(5)]
-
-	const total = reduce(prices, (sum, price) => sum + price, 0)
-	const average = reduce(prices, (acc, price, i) => {
+<PageBoundary title="reduce()">
+	{@const prices = [getPrice(0), getPrice(1), getPrice(2), getPrice(3), getPrice(4)]}
+	{@const users = [getUser(1), getUser(2), getUser(3), getUser(4), getUser(5)]}
+	{@const total = reduce(prices, (sum, price) => sum + price, 0)}
+	{@const average = reduce(prices, (acc, price, i) => {
 		const newSum = acc.sum + price
 		const count = i + 1
 		return { sum: newSum, avg: newSum / count }
-	}, { sum: 0, avg: 0 })
+	}, { sum: 0, avg: 0 })}
+	{@const activeCount = reduce(users, (count, user) => user.active ? count + 1 : count, 0)}
+	{@const nameList = reduce(users, (acc, user, i) => i === 0 ? user.name : `${acc}, ${user.name}`, '')}
 
-	const activeCount = reduce(users, (count, user) => user.active ? count + 1 : count, 0)
-	const nameList = reduce(users, (acc, user, i) => i === 0 ? user.name : `${acc}, ${user.name}`, '')
-
-	const refresh = () => {
-		prices.forEach(p => p.refresh())
-		users.forEach(u => u.refresh())
-	}
-</script>
-
-<svelte:boundary>
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -50,9 +44,9 @@ const activeCount = reduce(users, (n, u) => u.active ? n + 1 : n, 0)`}</code></p
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if total.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Loading</button>
+					<button class="status status-loading" onclick={() => { prices.forEach(p => p.refresh()); users.forEach(u => u.refresh()) }}><span class="spinner"></span> Loading</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ Refresh</button>
+					<button class="status status-success" onclick={() => { prices.forEach(p => p.refresh()); users.forEach(u => u.refresh()) }}>↻ Refresh</button>
 				{/if}
 			</div>
 
@@ -100,15 +94,4 @@ const activeCount = reduce(users, (n, u) => u.active ? n + 1 : n, 0)`}</code></p
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">reduce()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>

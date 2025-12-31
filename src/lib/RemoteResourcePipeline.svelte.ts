@@ -233,33 +233,57 @@ export const fromEffect = <_Value, _Error>(
 	let current = $state<_Value | undefined>(undefined)
 	let ready = $state(false)
 
-	const promise = runEffect().then(
-		(value) => {
-			current = value
-			ready = true
-			loading = false
-			return value
-		},
-		(err) => {
-			error = err
-			loading = false
-			throw err
-		}
+	const promise = $state.raw(
+		runEffect().then(
+			(value) => {
+				current = value
+				ready = true
+				loading = false
+				return value
+			},
+			(err) => {
+				error = err
+				loading = false
+				throw err
+			}
+		)
 	)
 
-	const then = ((onFulfilled?: (v: _Value) => unknown, onRejected?: (e: unknown) => unknown) => {
-		const result = promise.then(async () => { await tick(); return current as _Value })
-		return onFulfilled || onRejected ? result.then(onFulfilled, onRejected) : result
-	}) as Promise<_Value>['then']
+	const then = $derived.by(() => {
+		promise
+		return ((onFulfilled?: (v: _Value) => unknown, onRejected?: (e: unknown) => unknown) => {
+			const result = promise.then(async () => { await tick(); return current as _Value })
+			return onFulfilled || onRejected ? result.then(onFulfilled, onRejected) : result
+		}) as Promise<_Value>['then']
+	})
 
 	return {
-		get current() { return current },
-		get loading() { return loading },
-		get error() { return error },
-		get ready() { return ready },
-		get then() { return then },
-		get catch() { return (r: ((e: unknown) => unknown) | null | undefined) => then(undefined, r ?? undefined) },
-		get finally() { return (f: (() => void) | null | undefined) => then(v => { f?.(); return v }, e => { f?.(); throw e }) }
+		get current() {
+			return current
+		},
+		get loading() {
+			return loading
+		},
+		get error() {
+			return error
+		},
+		get ready() {
+			return ready
+		},
+		get then() {
+			return then
+		},
+		get catch() {
+			return (reject: ((e: unknown) => unknown) | null | undefined) =>
+				then(undefined, reject ?? undefined)
+		},
+		get finally() {
+			return (fn: (() => void) | null | undefined) =>
+				then(
+					value => { fn?.(); return value },
+					error => { fn?.(); throw error }
+				)
+		}
 	} as unknown as RemoteResource<_Value>
 }
 
@@ -366,7 +390,7 @@ export const tap = <_Value>(
 ) => (
 	resource: RemoteResource<_Value>
 ): RemoteResource<_Value> =>
-	RR.then(resource, v => { effect(v); return v })
+	RR.then(resource, value => { effect(value); return value })
 
 /**
  * Applies a fallback resource if the primary errors.
@@ -376,39 +400,66 @@ export const orElse = <_Value>(
 ) => (
 	resource: RemoteResource<_Value>
 ): RemoteResource<_Value> => {
-	const current = $derived(
-		resource.error ? fallback().current : resource.current
-	)
-	const ready = $derived(
-		resource.error ? fallback().ready : resource.ready
-	)
-	const loading = $derived(
-		resource.error ? fallback().loading : resource.loading
-	)
-	const error = $derived(
-		resource.error ? fallback().error : undefined
+	const fallbackResource = $derived(
+		resource.error ? fallback() : undefined
 	)
 
-	const then = ((onFulfilled?: (v: _Value) => unknown, onRejected?: (e: unknown) => unknown) => {
-		// Wait for primary, on error wait for fallback
-		const result = Promise.resolve(resource).catch(() => Promise.resolve(fallback())).then(async () => { await tick(); return current as _Value })
-		return onFulfilled || onRejected ? result.then(onFulfilled, onRejected) : result
-	}) as Promise<_Value>['then']
+	const current = $derived(
+		fallbackResource ? fallbackResource.current : resource.current
+	)
+
+	const ready = $derived(
+		fallbackResource ? fallbackResource.ready : resource.ready
+	)
+
+	const loading = $derived(
+		fallbackResource ? fallbackResource.loading : resource.loading
+	)
+
+	const error = $derived(
+		fallbackResource ? fallbackResource.error : undefined
+	)
+
+	const then = $derived.by(() => {
+		const promise = resource.then().catch(() => fallbackResource ? fallbackResource.then() : Promise.reject())
+		return ((onFulfilled?: (v: _Value) => unknown, onRejected?: (e: unknown) => unknown) => {
+			const result = promise.then(async () => { await tick(); return current as _Value })
+			return onFulfilled || onRejected ? result.then(onFulfilled, onRejected) : result
+		}) as Promise<_Value>['then']
+	})
 
 	return {
-		get current() { return current },
-		get loading() { return loading },
-		get error() { return error },
-		get ready() { return ready },
-		get then() { return then },
-		get catch() { return (r: ((e: unknown) => unknown) | null | undefined) => then(undefined, r ?? undefined) },
-		get finally() { return (f: (() => void) | null | undefined) => then(v => { f?.(); return v }, e => { f?.(); throw e }) }
+		get current() {
+			return current
+		},
+		get loading() {
+			return loading
+		},
+		get error() {
+			return error
+		},
+		get ready() {
+			return ready
+		},
+		get then() {
+			return then
+		},
+		get catch() {
+			return (reject: ((e: unknown) => unknown) | null | undefined) =>
+				then(undefined, reject ?? undefined)
+		},
+		get finally() {
+			return (fn: (() => void) | null | undefined) =>
+				then(
+					value => { fn?.(); return value },
+					error => { fn?.(); throw error }
+				)
+		}
 	} as unknown as RemoteResource<_Value>
 }
 
 /**
  * Retries a resource creation on failure.
- * Uses promise chaining to handle retries correctly.
  */
 export const retry = <_Value>(
 	createResource: () => RemoteResource<_Value>,
@@ -421,42 +472,64 @@ export const retry = <_Value>(
 
 	const attemptWithRetry = async (attempt: number): Promise<_Value> => {
 		try {
-			return await Promise.resolve(createResource())
-		} catch (e) {
-			if (attempt < maxAttempts) {
-				return attemptWithRetry(attempt + 1)
-			}
-			throw e
+			return await createResource().then()
+		} catch (err) {
+			if (attempt < maxAttempts) return attemptWithRetry(attempt + 1)
+			throw err
 		}
 	}
 
-	const promise = attemptWithRetry(1).then(
-		(value) => {
-			current = value
-			ready = true
-			loading = false
-			return value
-		},
-		(err) => {
-			error = err
-			loading = false
-			throw err
-		}
+	const promise = $state.raw(
+		attemptWithRetry(1).then(
+			(value) => {
+				current = value
+				ready = true
+				loading = false
+				return value
+			},
+			(err) => {
+				error = err
+				loading = false
+				throw err
+			}
+		)
 	)
 
-	const then = ((onFulfilled?: (v: _Value) => unknown, onRejected?: (e: unknown) => unknown) => {
-		const result = promise.then(async () => { await tick(); return current as _Value })
-		return onFulfilled || onRejected ? result.then(onFulfilled, onRejected) : result
-	}) as Promise<_Value>['then']
+	const then = $derived.by(() => {
+		promise
+		return ((onFulfilled?: (v: _Value) => unknown, onRejected?: (e: unknown) => unknown) => {
+			const result = promise.then(async () => { await tick(); return current as _Value })
+			return onFulfilled || onRejected ? result.then(onFulfilled, onRejected) : result
+		}) as Promise<_Value>['then']
+	})
 
 	return {
-		get current() { return current },
-		get loading() { return loading },
-		get error() { return error },
-		get ready() { return ready },
-		get then() { return then },
-		get catch() { return (r: ((e: unknown) => unknown) | null | undefined) => then(undefined, r ?? undefined) },
-		get finally() { return (f: (() => void) | null | undefined) => then(v => { f?.(); return v }, e => { f?.(); throw e }) }
+		get current() {
+			return current
+		},
+		get loading() {
+			return loading
+		},
+		get error() {
+			return error
+		},
+		get ready() {
+			return ready
+		},
+		get then() {
+			return then
+		},
+		get catch() {
+			return (reject: ((e: unknown) => unknown) | null | undefined) =>
+				then(undefined, reject ?? undefined)
+		},
+		get finally() {
+			return (fn: (() => void) | null | undefined) =>
+				then(
+					value => { fn?.(); return value },
+					error => { fn?.(); throw error }
+				)
+		}
 	} as unknown as RemoteResource<_Value>
 }
 

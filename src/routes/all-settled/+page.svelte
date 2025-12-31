@@ -1,23 +1,16 @@
 <script lang="ts">
 	import { allSettled } from '$lib/RemoteResource.svelte'
 	import { getMayFail } from '../demo.remote'
-
-	const q1 = getMayFail(1)
-	const q2 = getMayFail(2)
-	const q3 = getMayFail(3)
-	const q4 = getMayFail(4)
-
-	const results = allSettled([q1, q2, q3, q4])
-
-	const refresh = () => {
-		q1.refresh()
-		q2.refresh()
-		q3.refresh()
-		q4.refresh()
-	}
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
 
-<svelte:boundary>
+<PageBoundary title="allSettled()">
+	{@const q1 = getMayFail(1)}
+	{@const q2 = getMayFail(2)}
+	{@const q3 = getMayFail(3)}
+	{@const q4 = getMayFail(4)}
+	{@const results = allSettled([q1, q2, q3, q4])}
+
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -50,9 +43,9 @@ const results = allSettled([
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if results.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Settling...</button>
+					<button class="status status-loading" onclick={() => { q1.refresh(); q2.refresh(); q3.refresh(); q4.refresh() }}><span class="spinner"></span> Settling...</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ All Settled</button>
+					<button class="status status-success" onclick={() => { q1.refresh(); q2.refresh(); q3.refresh(); q4.refresh() }}>↻ All Settled</button>
 				{/if}
 			</div>
 
@@ -102,15 +95,4 @@ const results = allSettled([
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">allSettled()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>

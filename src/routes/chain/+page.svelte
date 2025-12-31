@@ -1,17 +1,15 @@
 <script lang="ts">
 	import { chain, then } from '$lib/RemoteResource.svelte'
 	import { getUsers, getPosts } from '../demo.remote'
-
-	const users = getUsers()
-	const firstUser = then(users, users => users[0])
-
-	const firstUserPosts = chain(users, users => getPosts(users[0].id))
-	const secondUserPosts = chain(users, users => getPosts(users[1]?.id ?? 1))
-
-	const refresh = () => users.refresh()
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
 
-<svelte:boundary>
+<PageBoundary title="chain()">
+	{@const users = getUsers()}
+	{@const firstUser = then(users, users => users[0])}
+	{@const firstUserPosts = chain(users, users => getPosts(users[0].id))}
+	{@const secondUserPosts = chain(users, users => getPosts(users[1]?.id ?? 1))}
+
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -42,9 +40,9 @@ const firstUserPosts = chain(
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if firstUserPosts.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Chaining...</button>
+					<button class="status status-loading" onclick={() => users.refresh()}><span class="spinner"></span> Chaining...</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ Refresh</button>
+					<button class="status status-success" onclick={() => users.refresh()}>↻ Refresh</button>
 				{/if}
 			</div>
 
@@ -143,15 +141,4 @@ const firstUserPosts = chain(
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">chain()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>

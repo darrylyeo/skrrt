@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { then } from '$lib/RemoteResource.svelte'
 	import { getUsers } from '../demo.remote'
-
-	const users = getUsers()
-	const userNames = then(users, users => users.map(u => u.name))
-	const userCount = then(users, users => users.length)
-	const firstUser = then(users, users => users[0])
-
-	const refresh = () => users.refresh()
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
 
-<svelte:boundary>
+<PageBoundary title="then()">
+	{@const users = getUsers()}
+	{@const userNames = then(users, users => users.map(u => u.name))}
+	{@const userCount = then(users, users => users.length)}
+	{@const firstUser = then(users, users => users[0])}
+
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -38,9 +37,9 @@ const firstUser = then(users, users => users[0])`}</code></pre>
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if userNames.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Loading</button>
+					<button class="status status-loading" onclick={() => users.refresh()}><span class="spinner"></span> Loading</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ Refresh</button>
+					<button class="status status-success" onclick={() => users.refresh()}>↻ Refresh</button>
 				{/if}
 			</div>
 
@@ -78,15 +77,4 @@ const firstUser = then(users, users => users[0])`}</code></pre>
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">then()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>

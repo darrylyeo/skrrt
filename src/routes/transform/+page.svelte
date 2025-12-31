@@ -1,39 +1,31 @@
 <script lang="ts">
 	import { transform } from '$lib/RemoteResource.svelte'
 	import { getFailure, getSuccess, getMayFail } from '../demo.remote'
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
 
 	type TransformResult<T> = { type: 'success'; data: T } | { type: 'error'; message: string }
+</script>
 
-	const failureQuery = getFailure()
-	const successQuery = getSuccess()
-	const maybeQuery = getMayFail(3)
-
-	const failedTransformed = transform<Awaited<typeof failureQuery>, TransformResult<Awaited<typeof failureQuery>>>(failureQuery, {
+<PageBoundary title="transform()">
+	{@const failureQuery = getFailure()}
+	{@const successQuery = getSuccess()}
+	{@const maybeQuery = getMayFail(3)}
+	{@const failedTransformed = transform<Awaited<typeof failureQuery>, TransformResult<Awaited<typeof failureQuery>>>(failureQuery, {
 		onSuccess: data => ({ type: 'success', data }),
 		onError: error => ({
 			type: 'error',
 			message: error instanceof Error ? error.message : 'Unknown error'
 		})
-	})
-
-	const successTransformed = transform<Awaited<typeof successQuery>, TransformResult<Awaited<typeof successQuery>>>(successQuery, {
+	})}
+	{@const successTransformed = transform<Awaited<typeof successQuery>, TransformResult<Awaited<typeof successQuery>>>(successQuery, {
 		onSuccess: data => ({ type: 'success', data }),
 		onError: () => ({ type: 'error', message: 'Failed' })
-	})
-
-	const maybeTransformed = transform<Awaited<typeof maybeQuery>, { status: string; value: number }>(maybeQuery, {
+	})}
+	{@const maybeTransformed = transform<Awaited<typeof maybeQuery>, { status: string; value: number }>(maybeQuery, {
 		onSuccess: data => ({ status: 'ok', value: data.value }),
 		onError: () => ({ status: 'fallback', value: 0 })
-	})
+	})}
 
-	const refresh = () => {
-		failureQuery.refresh()
-		successQuery.refresh()
-		maybeQuery.refresh()
-	}
-</script>
-
-<svelte:boundary>
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -61,9 +53,9 @@ const result = transform(getFailure(), {
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if failedTransformed.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Loading</button>
+					<button class="status status-loading" onclick={() => { failureQuery.refresh(); successQuery.refresh(); maybeQuery.refresh() }}><span class="spinner"></span> Loading</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ Refresh</button>
+					<button class="status status-success" onclick={() => { failureQuery.refresh(); successQuery.refresh(); maybeQuery.refresh() }}>↻ Refresh</button>
 				{/if}
 			</div>
 
@@ -138,15 +130,4 @@ const result = transform(getFailure(), {
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">transform()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>

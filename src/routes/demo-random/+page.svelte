@@ -74,18 +74,18 @@
 </script>
 
 <PageBoundary title="Chaos: Stress Testing">
-<div class="page">
-	<a href="/" class="page-back">← Back to Home</a>
+	<div class="page">
+		<a href="/" class="page-back">← Back to Home</a>
 
-	<header class="page-header">
-		<h1 class="page-title">Chaos: Stress Testing</h1>
-		<p class="page-description">
-			Test helpers with queries that return randomized values.
-			Adjust the item count to stress test with more resources.
-		</p>
-	</header>
+		<header class="page-header">
+			<h1 class="page-title">Chaos: Stress Testing</h1>
+			<p class="page-description">
+				Test helpers with queries that return randomized values.
+				Adjust the item count to stress test with more resources.
+			</p>
+		</header>
 
-	<div class="controls">
+		<div class="controls">
 		<div class="count-controls">
 			<label>
 				<span>Items:</span>
@@ -282,8 +282,8 @@
 				</div>
 			</div>
 		</section>
+		</div>
 	</div>
-</div>
 </PageBoundary>
 
 <style>

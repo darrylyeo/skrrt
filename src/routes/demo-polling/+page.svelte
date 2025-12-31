@@ -75,17 +75,17 @@
 </script>
 
 <PageBoundary title="Realtime: Live Updates">
-<div class="page">
-	<a href="/" class="page-back">← Back to Home</a>
+	<div class="page">
+		<a href="/" class="page-back">← Back to Home</a>
 
-	<header class="page-header">
-		<h1 class="page-title">Realtime: Live Updates</h1>
-		<p class="page-description">
-			Tests reactivity with continuous polling. Adjust stocks count and start/stop polling.
-		</p>
-	</header>
+		<header class="page-header">
+			<h1 class="page-title">Realtime: Live Updates</h1>
+			<p class="page-description">
+				Tests reactivity with continuous polling. Adjust stocks count and start/stop polling.
+			</p>
+		</header>
 
-	<div class="controls">
+		<div class="controls">
 		<div class="count-controls">
 			<label>
 				<span>Stocks:</span>
@@ -209,8 +209,8 @@
 				{/if}
 			</div>
 		</section>
+		</div>
 	</div>
-</div>
 </PageBoundary>
 
 <style>

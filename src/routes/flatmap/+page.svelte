@@ -1,28 +1,24 @@
 <script lang="ts">
 	import { flatMap } from '$lib/RemoteResource.svelte'
 	import { getUser } from '../demo.remote'
+	import PageBoundary from '$lib/components/PageBoundary.svelte'
+</script>
 
-	const users = [1, 2, 3].map(id => getUser(id))
-
-	const allTags = flatMap(users, user => {
+<PageBoundary title="flatMap()">
+	{@const users = [1, 2, 3].map(id => getUser(id))}
+	{@const allTags = flatMap(users, user => {
 		const baseTags = [user.name.toLowerCase(), user.active ? 'active' : 'inactive']
 		if (user.id === 1) baseTags.push('admin', 'verified')
 		if (user.id === 2) baseTags.push('moderator')
 		return baseTags
-	})
-
-	const emailParts = flatMap(users, user => user.email.split('@'))
-
-	const userActions = flatMap(users, (user, i) => [
+	})}
+	{@const emailParts = flatMap(users, user => user.email.split('@'))}
+	{@const userActions = flatMap(users, (user, i) => [
 		{ userId: user.id, action: 'view', order: i * 3 },
 		{ userId: user.id, action: 'edit', order: i * 3 + 1 },
 		{ userId: user.id, action: 'delete', order: i * 3 + 2 }
-	])
+	])}
 
-	const refresh = () => users.forEach(u => u.refresh())
-</script>
-
-<svelte:boundary>
 	<div class="page">
 		<a href="/" class="page-back">← Back to Home</a>
 
@@ -54,9 +50,9 @@ const allTags = flatMap(users, user => [
 			<div class="section-header">
 				<h2>Result</h2>
 				{#if allTags.loading}
-					<button class="status status-loading" onclick={refresh}><span class="spinner"></span> Loading...</button>
+					<button class="status status-loading" onclick={() => users.forEach(u => u.refresh())}><span class="spinner"></span> Loading...</button>
 				{:else}
-					<button class="status status-success" onclick={refresh}>↻ Refresh</button>
+					<button class="status status-success" onclick={() => users.forEach(u => u.refresh())}>↻ Refresh</button>
 				{/if}
 			</div>
 
@@ -111,18 +107,7 @@ const allTags = flatMap(users, user => [
 			</div>
 		</section>
 	</div>
-
-	{#snippet failed(error, retry)}
-		<div class="page">
-			<a href="/" class="page-back">← Back to Home</a>
-			<h1 class="page-title">flatMap()</h1>
-			<div class="demo-box">
-				<p class="error">Error: {error instanceof Error ? error.message : String(error)}</p>
-				<button class="btn" onclick={retry}>↻ Retry</button>
-			</div>
-		</div>
-	{/snippet}
-</svelte:boundary>
+</PageBoundary>
 
 <style>
 	.source-grid {
