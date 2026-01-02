@@ -233,7 +233,7 @@
 
 		<h3>Data-First API</h3>
 		<div class="code-block">
-			<pre><code>{`import { derive, all, map, filter } from '$lib/RemoteResource.svelte'
+			<pre><code>{`import { derive, all, map, filter } from 'sveltekit-remote-resources'
 import { getUsers, getPosts } from './demo.remote'
 
 // Transform a single resource
@@ -249,7 +249,7 @@ const userIds = map(getUsers(), user => user.id)`}</code></pre>
 
 		<h3>Effect-Style Pipeable API</h3>
 		<div class="code-block">
-			<pre><code>{`import { pipe, map, mapArray, catchError, combineWith } from '$lib/RemoteResourcePipeline.svelte'
+			<pre><code>{`import { pipe, map, mapArray, catchError, combineWith } from 'sveltekit-remote-resources'
 import { getUser } from './demo.remote'
 
 // Compose transformations with pipe

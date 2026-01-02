@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { all, race, map, filter, reduce, catchError, allSettled } from '$lib/RemoteResource.svelte'
+	import { all, race, map, filter, reduce, catchError, allSettled } from 'sveltekit-remote-resources'
 	import {
 		getRandomNumberById,
 		getFlakyData,

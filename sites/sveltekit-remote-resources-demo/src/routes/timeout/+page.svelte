@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { timeout, catchError } from '$lib/RemoteResource.svelte'
+	import { timeout, catchError } from 'sveltekit-remote-resources'
 	import { getSlow, getVerySlowData } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 	import Boundary from '$lib/components/Boundary.svelte'
@@ -20,7 +20,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { timeout } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { timeout } from 'sveltekit-remote-resources'
 
 // Fail if not ready in 500ms
 const data = timeout(getSlowData(), 500)

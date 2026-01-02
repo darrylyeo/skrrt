@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { chain, derive } from '$lib/RemoteResource.svelte'
+	import { chain, derive } from 'sveltekit-remote-resources'
 	import { getUsers, getPosts } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
@@ -24,7 +24,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-			<pre><code>{`import { chain } from '$lib/RemoteResource.svelte'
+			<pre><code>{`import { chain } from 'sveltekit-remote-resources'
 
 // First get users, then get posts for the first user
 const firstUserPosts = chain(

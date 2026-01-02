@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { withDefault, derive } from '$lib/RemoteResource.svelte'
+	import { withDefault, derive } from 'sveltekit-remote-resources'
 	import { getUsers, getPrices } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
@@ -25,7 +25,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { withDefault } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { withDefault } from 'sveltekit-remote-resources'
 
 const users = withDefault(getUsers(), [])
 // users.current is [] while loading, then actual data

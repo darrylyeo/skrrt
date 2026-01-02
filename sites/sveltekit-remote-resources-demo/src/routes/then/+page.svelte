@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { derive } from '$lib/RemoteResource.svelte'
+	import { derive } from 'sveltekit-remote-resources'
 	import { getUsers } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
@@ -24,7 +24,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { derive } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { derive } from 'sveltekit-remote-resources'
 
 const users = getUsers()
 const userNames = derive(users, users => users.map(u => u.name))

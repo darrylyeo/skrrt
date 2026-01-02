@@ -79,7 +79,7 @@ export function pipe(
  * Pipeable version of derive - transforms the value when ready.
  */
 export const map = <_Value, _Result>(
-	transform: (value: _Value) => _Result
+	transform: (value: _Value) => Awaited<_Result>
 ) => (
 	resource: RemoteResource<_Value>
 ): RemoteResource<_Result> =>
@@ -338,7 +338,7 @@ export const fromEffects = <_Value>(
  */
 export const combineWith = <_Resources extends readonly RemoteResource<unknown>[], _Result>(
 	resources: _Resources,
-	transform: (values: { [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? _Value : never }) => _Result
+	transform: (values: { [_Key in keyof _Resources]: _Resources[_Key] extends RemoteResource<infer _Value> ? _Value : never }) => Awaited<_Result>
 ): RemoteResource<_Result> =>
 	RR.derive(RR.all(resources), transform)
 
@@ -375,11 +375,11 @@ export const tuple = <_Resources extends RemoteResource<unknown>[]>(
  */
 export const when = <_Value>(
 	predicate: (value: _Value) => boolean,
-	transform: (value: _Value) => _Value
+	transform: (value: _Value) => Awaited<_Value>
 ) => (
 	resource: RemoteResource<_Value>
 ): RemoteResource<_Value> =>
-	RR.derive(resource, v => predicate(v) ? transform(v) : v)
+	RR.derive(resource, v => predicate(v) ? transform(v) : v as Awaited<_Value>)
 
 /**
  * Taps into a resource without transforming it.
@@ -390,7 +390,7 @@ export const tap = <_Value>(
 ) => (
 	resource: RemoteResource<_Value>
 ): RemoteResource<_Value> =>
-	RR.derive(resource, value => { effect(value); return value })
+	RR.derive(resource, value => { effect(value); return value as Awaited<_Value> })
 
 /**
  * Applies a fallback resource if the primary errors.
@@ -532,4 +532,3 @@ export const retry = <_Value>(
 		}
 	} as unknown as RemoteResource<_Value>
 }
-

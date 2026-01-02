@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { allSettled } from '$lib/RemoteResource.svelte'
+	import { allSettled } from 'sveltekit-remote-resources'
 	import { getMayFail } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
@@ -25,7 +25,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { allSettled } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { allSettled } from 'sveltekit-remote-resources'
 
 // getMayFail fails for even seeds, succeeds for odd
 const results = allSettled([

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { race } from '$lib/RemoteResource.svelte'
+	import { race } from 'sveltekit-remote-resources'
 	import { getRandomNumberById } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 	import Boundary from '$lib/components/Boundary.svelte'
@@ -22,7 +22,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { race } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { race } from 'sveltekit-remote-resources'
 
 const winner = race([racer1, racer2, racer3, racer4, racer5])
 // winner.current shows the first one to complete

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { transform } from '$lib/RemoteResource.svelte'
+	import { transform } from 'sveltekit-remote-resources'
 	import { getFailure, getSuccess, getMayFail } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 	import Boundary from '$lib/components/Boundary.svelte'
@@ -22,7 +22,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { transform } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { transform } from 'sveltekit-remote-resources'
 
 const result = transform(getFailure(), {
   onSuccess: data => ({ type: 'success', data }),

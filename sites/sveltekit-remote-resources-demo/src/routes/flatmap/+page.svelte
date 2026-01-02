@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { flatMap } from '$lib/RemoteResource.svelte'
+	import { flatMap } from 'sveltekit-remote-resources'
 	import { getUser } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
@@ -33,7 +33,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { flatMap } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { flatMap } from 'sveltekit-remote-resources'
 
 const users = [1, 2, 3].map(id => getUser(id))
 

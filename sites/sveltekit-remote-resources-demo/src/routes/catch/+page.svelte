@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { catchError } from '$lib/RemoteResource.svelte'
+	import { catchError } from 'sveltekit-remote-resources'
 	import { getFailure, getSuccess } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
@@ -30,7 +30,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { catchError } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { catchError } from 'sveltekit-remote-resources'
 
 const failingQuery = getFailure()
 const recovered = catchError(failingQuery, error => ({

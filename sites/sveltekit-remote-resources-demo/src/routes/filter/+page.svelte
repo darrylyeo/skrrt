@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { filter } from '$lib/RemoteResource.svelte'
+	import { filter } from 'sveltekit-remote-resources'
 	import { getUser } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
@@ -24,7 +24,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { filter } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { filter } from 'sveltekit-remote-resources'
 
 const users = [getUser(1), getUser(2), getUser(3), getUser(4), getUser(5)]
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { delay } from '$lib/RemoteResource.svelte'
+	import { delay } from 'sveltekit-remote-resources'
 	import { getFast, getMedium } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 	import Boundary from '$lib/components/Boundary.svelte'
@@ -20,7 +20,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { delay } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { delay } from 'sveltekit-remote-resources'
 
 // Always show loading for at least 500ms
 const data = delay(getFastData(), 500)

@@ -3,14 +3,15 @@
 		"./lib/sveltekit-remote-resources",
 		"./sites/sveltekit-remote-resources-demo"
 	],
+	"nodeModulesDir": "manual",
 	"tasks": {
-		"build": {
+		"lib:build": {
 			"command": "deno task --filter sveltekit-remote-resources build",
 			"dependencies": [
-				"check"
+				"lib:check"
 			]
 		},
-		"check": {
+		"lib:check": {
 			"command": "deno task --filter sveltekit-remote-resources check"
 		},
 		"demo:dev": {

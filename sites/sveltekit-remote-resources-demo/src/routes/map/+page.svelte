@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { map } from '$lib/RemoteResource.svelte'
+	import { map } from 'sveltekit-remote-resources'
 	import { getUser, getPrice } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 </script>
@@ -25,7 +25,7 @@
 		<section class="section">
 			<h2>Usage</h2>
 			<div class="code-block">
-				<pre><code>{`import { map } from '$lib/RemoteResource.svelte'
+				<pre><code>{`import { map } from 'sveltekit-remote-resources'
 
 const users = [getUser(1), getUser(2), getUser(3)]
 const prices = [getPrice(0), getPrice(1), getPrice(2)]

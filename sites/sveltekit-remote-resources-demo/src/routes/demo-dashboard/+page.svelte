@@ -14,7 +14,7 @@
 		withDefault,
 		timeout,
 		delay
-	} from '$lib/RemoteResource.svelte'
+	} from 'sveltekit-remote-resources'
 	import {
 		getRecentOrders,
 		getCustomer,

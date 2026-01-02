@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { derive, all, reduce } from '$lib/RemoteResource.svelte'
+	import { derive, all, reduce } from 'sveltekit-remote-resources'
 	import { getPollingData, getRandomStock } from '../demo.remote'
 	import PageBoundary from '$lib/components/PageBoundary.svelte'
 

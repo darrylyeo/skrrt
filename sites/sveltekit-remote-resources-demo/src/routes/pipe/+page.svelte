@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pipe, map, mapArray, filterArray, catchError, combineWith } from '$lib/RemoteResourcePipeline.svelte'
+	import { pipe, map, mapArray, filterArray, catchError, combineWith } from 'sveltekit-remote-resources'
 	import { getUser, getPrice, getFailure } from '../demo.remote'
 	import Boundary from '$lib/components/Boundary.svelte'
 </script>
@@ -18,7 +18,7 @@
 	<section class="section">
 		<h2>Usage</h2>
 		<div class="code-block">
-			<pre><code>{`import { pipe, map, mapArray, filterArray, catchError, combineWith } from '$lib/RemoteResourcePipeline.svelte'
+			<pre><code>{`import { pipe, map, mapArray, filterArray, catchError, combineWith } from 'sveltekit-remote-resources'
 
 // Transform array of resources
 const userNames = pipe(
