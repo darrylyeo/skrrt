@@ -1,0 +1,14 @@
+{
+	"name": "sveltekit-remote-resources-monorepo",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"lib:check": "pnpm --filter sveltekit-remote-resources check",
+		"lib:build": "pnpm lib:check && pnpm --filter sveltekit-remote-resources build",
+		"demo:dev": "pnpm --filter sveltekit-remote-resources-demo dev",
+		"demo:check": "pnpm --filter sveltekit-remote-resources-demo check",
+		"demo:build": "pnpm lib:build && pnpm --filter sveltekit-remote-resources-demo build",
+		"demo:preview": "pnpm demo:build && pnpm --filter sveltekit-remote-resources-demo preview"
+	}
+}
