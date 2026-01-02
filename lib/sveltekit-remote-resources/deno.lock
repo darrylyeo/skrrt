@@ -668,35 +668,18 @@
     }
   },
   "workspace": {
-    "members": {
-      "lib/sveltekit-remote-resources": {
-        "packageJson": {
-          "dependencies": [
-            "npm:@sveltejs/adapter-auto@7",
-            "npm:@sveltejs/kit@^2.49.1",
-            "npm:@sveltejs/package@^2.5.7",
-            "npm:@sveltejs/vite-plugin-svelte@^6.2.1",
-            "npm:publint@~0.3.15",
-            "npm:svelte-check@^4.3.4",
-            "npm:svelte@^5.45.6",
-            "npm:typescript@^5.9.3",
-            "npm:vite@^7.2.6"
-          ]
-        }
-      },
-      "sites/sveltekit-remote-resources-demo": {
-        "packageJson": {
-          "dependencies": [
-            "npm:@sveltejs/adapter-auto@7",
-            "npm:@sveltejs/kit@^2.49.1",
-            "npm:@sveltejs/vite-plugin-svelte@^6.2.1",
-            "npm:svelte-check@^4.3.4",
-            "npm:svelte@^5.45.6",
-            "npm:typescript@^5.9.3",
-            "npm:vite@^7.2.6"
-          ]
-        }
-      }
+    "packageJson": {
+      "dependencies": [
+        "npm:@sveltejs/adapter-auto@7",
+        "npm:@sveltejs/kit@^2.49.1",
+        "npm:@sveltejs/package@^2.5.7",
+        "npm:@sveltejs/vite-plugin-svelte@^6.2.1",
+        "npm:publint@~0.3.15",
+        "npm:svelte-check@^4.3.4",
+        "npm:svelte@^5.45.6",
+        "npm:typescript@^5.9.3",
+        "npm:vite@^7.2.6"
+      ]
     }
   }
 }
