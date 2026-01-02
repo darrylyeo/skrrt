@@ -837,3 +837,153 @@ export const chain = <_Value, _Result>(
 		[Symbol.toStringTag]: 'RemoteResource',
 	}
 }
+
+
+// ============================================================================
+// TIMING HELPERS
+// ============================================================================
+
+/**
+ * Fails with a timeout error if the resource doesn't settle within the specified time.
+ */
+export const timeout = <_Value>(
+	resource: RemoteResource<_Value>,
+	ms: number,
+	message = `Timed out after ${ms}ms`
+): RemoteResource<_Value> => {
+	const timedOut = $state.raw({ value: false })
+
+	const timeoutPromise = new Promise<never>((_, reject) => {
+		const id = setTimeout(() => {
+			timedOut.value = true
+			reject(new Error(message))
+		}, ms)
+
+		resource.finally(
+			() => clearTimeout(id)
+		)
+	})
+
+	const current = $derived(
+		resource.current
+	)
+
+	const error = $derived(
+		timedOut.value ? new Error(message) : resource.error
+	)
+
+	const ready = $derived(
+		resource.ready && !timedOut.value
+	)
+
+	const loading = $derived(
+		resource.loading && !timedOut.value
+	)
+
+	const promise = $derived(
+		Promise.race([resource, timeoutPromise])
+			.then(tick)
+			.then(() => current as Awaited<_Value>)
+	)
+
+	// @ts-expect-error current
+	return {
+		get current() {
+			return current
+		},
+
+		get loading() {
+			return loading
+		},
+
+		get error() {
+			return error
+		},
+
+		get ready() {
+			return ready
+		},
+
+		get then() {
+			return promise.then.bind(promise)
+		},
+
+		get catch() {
+			return promise.catch.bind(promise)
+		},
+
+		get finally() {
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
+}
+
+/**
+ * Adds a minimum delay before the resource is considered ready.
+ * Prevents flash of loading state for fast queries.
+ */
+export const delay = <_Value>(
+	resource: RemoteResource<_Value>,
+	ms: number
+): RemoteResource<_Value> => {
+	const delayComplete = $state.raw({ value: false })
+
+	setTimeout(() => {
+		delayComplete.value = true
+	}, ms)
+
+	const current = $derived(
+		resource.current
+	)
+
+	const ready = $derived(
+		resource.ready && delayComplete.value
+	)
+
+	const loading = $derived(
+		resource.loading || (resource.ready && !delayComplete.value)
+	)
+
+	const delayPromise = new Promise<void>(resolve => setTimeout(resolve, ms))
+
+	const promise = $derived(
+		Promise.all([resource, delayPromise])
+			.then(tick)
+			.then(() => current as Awaited<_Value>)
+	)
+
+	// @ts-expect-error current
+	return {
+		get current() {
+			return current
+		},
+
+		get loading() {
+			return loading
+		},
+
+		get error() {
+			return resource.error
+		},
+
+		get ready() {
+			return ready
+		},
+
+		get then() {
+			return promise.then.bind(promise)
+		},
+
+		get catch() {
+			return promise.catch.bind(promise)
+		},
+
+		get finally() {
+			return promise.finally.bind(promise)
+		},
+
+		[Symbol.toStringTag]: 'RemoteResource',
+	}
+}

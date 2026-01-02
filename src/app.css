@@ -179,7 +179,6 @@ h3 {
 
 .main {
 	padding: 3rem;
-	max-width: 900px;
 }
 
 /* Cards */
@@ -408,7 +407,12 @@ h3 {
 /* Page layout */
 .page {
 	padding: 2rem 3rem;
-	max-width: 960px;
+    max-width: 960px;
+    margin-inline: auto;
+}
+
+.page.wide {
+	max-width: 1400px;
 }
 
 .page-header {
@@ -455,7 +459,6 @@ h3 {
 /* Demo section */
 .demo-section {
 	padding: 2rem 3rem;
-	max-width: 960px;
 }
 
 .demo-header {
@@ -525,6 +528,10 @@ h3 {
 	border-radius: 8px;
 	padding: 1rem;
 	text-align: center;
+}
+
+.stat.stat-inline {
+	display: inline-block;
 }
 
 .stat-value {
@@ -621,5 +628,76 @@ h3 {
 .feature-description {
 	font-size: 0.85rem;
 	color: var(--text-muted);
+}
+
+/* Utility classes */
+.subsection-title {
+	color: var(--text-secondary);
+	margin-bottom: 0.75rem;
+}
+
+.subsection-title.spaced {
+	margin-top: 1.5rem;
+}
+
+.grid-3 {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+	.grid-3 {
+		grid-template-columns: 1fr;
+	}
+}
+
+.mono {
+	font-family: var(--font-mono);
+}
+
+.text-primary {
+	color: var(--accent-primary);
+}
+
+.text-secondary {
+	color: var(--text-secondary);
+}
+
+.text-muted {
+	color: var(--text-muted);
+}
+
+.text-error {
+	color: var(--accent-tertiary);
+}
+
+.mt-lg {
+	margin-top: 1.5rem;
+}
+
+.mb-lg {
+	margin-bottom: 1.5rem;
+}
+
+/* Item icon variants */
+.item-icon.primary {
+	background: var(--accent-primary);
+	color: var(--bg-primary);
+}
+
+.item-icon.secondary {
+	background: var(--accent-secondary);
+	color: white;
+}
+
+.item-icon.tertiary {
+	background: var(--accent-tertiary);
+	color: white;
+}
+
+.item-icon.muted {
+	background: var(--text-muted);
+	color: var(--bg-primary);
 }
 

@@ -57,7 +57,7 @@ const allTags = flatMap(users, user => [
 			</div>
 
 			<div class="demo-box">
-				<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Source Users</h4>
+				<h4 class="subsection-title">Source Users</h4>
 				<div class="source-grid">
 					{#each users as user, i}
 						<div class="source-item" class:ready={user.ready}>
@@ -73,7 +73,7 @@ const allTags = flatMap(users, user => [
 					{/each}
 				</div>
 
-				<h4 style="color: var(--text-secondary); margin: 1.5rem 0 0.75rem;">
+				<h4 class="subsection-title spaced">
 					All Tags (flattened from {users.length} users)
 				</h4>
 				<div class="tags-container">
@@ -82,7 +82,7 @@ const allTags = flatMap(users, user => [
 					{/each}
 				</div>
 
-				<h4 style="color: var(--text-secondary); margin: 1.5rem 0 0.75rem;">
+				<h4 class="subsection-title spaced">
 					Email Parts (split and flattened)
 				</h4>
 				<div class="tags-container">
@@ -91,7 +91,7 @@ const allTags = flatMap(users, user => [
 					{/each}
 				</div>
 
-				<h4 style="color: var(--text-secondary); margin: 1.5rem 0 0.75rem;">
+				<h4 class="subsection-title spaced">
 					User Actions (3 per user, flattened)
 				</h4>
 				<div class="actions-list">

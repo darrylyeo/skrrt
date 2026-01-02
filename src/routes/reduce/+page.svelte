@@ -53,7 +53,7 @@ const activeCount = reduce(users, (n, u) => u.active ? n + 1 : n, 0)`}</code></p
 			<div class="demo-box">
 				{#if total.ready && activeCount.ready}
 					<div class="fade-in">
-						<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Price Calculations</h4>
+						<h4 class="subsection-title">Price Calculations</h4>
 						<div class="stats-grid">
 							<div class="stat">
 								<div class="stat-value">${total.current?.toFixed(2)}</div>
@@ -69,7 +69,7 @@ const activeCount = reduce(users, (n, u) => u.active ? n + 1 : n, 0)`}</code></p
 							</div>
 						</div>
 
-						<h4 style="color: var(--text-secondary); margin: 1.5rem 0 0.75rem;">User Aggregations</h4>
+						<h4 class="subsection-title spaced">User Aggregations</h4>
 						<div class="stats-grid">
 							<div class="stat">
 								<div class="stat-value">{activeCount.current}</div>
@@ -81,10 +81,10 @@ const activeCount = reduce(users, (n, u) => u.active ? n + 1 : n, 0)`}</code></p
 							</div>
 						</div>
 
-						<h4 style="color: var(--text-secondary); margin: 1.5rem 0 0.75rem;">Concatenated Names</h4>
+						<h4 class="subsection-title spaced">Concatenated Names</h4>
 						<div class="data-grid">
 							<div class="data-row">
-								<span class="data-value" style="font-family: var(--font-mono);">{nameList.current}</span>
+								<span class="data-value mono">{nameList.current}</span>
 							</div>
 						</div>
 					</div>

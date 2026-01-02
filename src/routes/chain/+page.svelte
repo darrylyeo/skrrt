@@ -47,7 +47,7 @@ const firstUserPosts = chain(
 			</div>
 
 			<div class="demo-box">
-				<div class="comparison" style="margin-bottom: 1.5rem;">
+				<div class="comparison mb-lg">
 					<div class="comparison-item">
 						<div class="comparison-label">Step 1: Users</div>
 						<div class="data-grid">
@@ -87,18 +87,18 @@ const firstUserPosts = chain(
 
 				{#if firstUser.ready && firstUserPosts.ready}
 					<div class="fade-in">
-						<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">
+						<h4 class="subsection-title">
 							Posts by {firstUser.current?.name} (User ID: {firstUser.current?.id})
 						</h4>
 						{#if firstUserPosts.current?.length === 0}
-							<div class="item" style="color: var(--text-muted);">
+							<div class="item text-muted">
 								No posts found
 							</div>
 						{:else}
 							<div class="item-list">
 								{#each firstUserPosts.current ?? [] as post}
 									<div class="item">
-										<div class="item-icon" style="background: var(--accent-secondary); color: white;">
+										<div class="item-icon secondary">
 											📝
 										</div>
 										<div class="item-content">
@@ -113,19 +113,19 @@ const firstUserPosts = chain(
 				{/if}
 
 				{#if users.ready && secondUserPosts.ready}
-					<div style="margin-top: 1.5rem;">
-						<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">
+					<div class="mt-lg">
+						<h4 class="subsection-title">
 							Posts by {users.current?.[1]?.name} (User ID: {users.current?.[1]?.id})
 						</h4>
 						{#if secondUserPosts.current?.length === 0}
-							<div class="item" style="color: var(--text-muted);">
+							<div class="item text-muted">
 								No posts found
 							</div>
 						{:else}
 							<div class="item-list">
 								{#each secondUserPosts.current ?? [] as post}
 									<div class="item">
-										<div class="item-icon" style="background: var(--accent-tertiary); color: white;">
+										<div class="item-icon tertiary">
 											📝
 										</div>
 										<div class="item-content">

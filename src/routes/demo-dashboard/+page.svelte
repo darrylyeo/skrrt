@@ -11,7 +11,9 @@
 		flatMap,
 		chain,
 		transform,
-		withDefault
+		withDefault,
+		timeout,
+		delay
 	} from '$lib/RemoteResource.svelte'
 	import {
 		getRecentOrders,
@@ -20,12 +22,14 @@
 		getMetric,
 		getCustomerOrders,
 		validatePromoCode,
+		getSlow,
+		getFast,
 		type Order
 	} from '../demo.remote'
 	import Boundary from '$lib/components/Boundary.svelte'
 </script>
 
-<div class="page" style="max-width: 1400px;">
+<div class="page wide">
 	<a href="/" class="page-back">← Back to Home</a>
 
 	<header class="page-header">
@@ -421,6 +425,84 @@
 				</div>
 			</Boundary>
 		</section>
+
+		<!-- 13. TIMEOUT -->
+		<section class="card">
+			<Boundary>
+				{@const slowResource = getSlow()}
+				{@const timedResource = timeout(slowResource, 500)}
+				{@const safeTimedResource = catchError(timedResource, (err) => ({ status: 'timeout', message: (err as Error).message }))}
+				{@const refresh = () => slowResource.refresh()}
+				<div class="card-header">
+					<h2>timeout()</h2>
+					<span class="helper-tag">Timing</span>
+					{#if safeTimedResource.loading}
+						<button class="status-mini status-loading" onclick={refresh} aria-label="Loading"><span class="spinner"></span></button>
+					{:else}
+						<button class="status-mini status-success" onclick={refresh} aria-label="Refresh">↻</button>
+					{/if}
+				</div>
+				<p class="card-desc">Fails if slow query (~1s) doesn't complete in 500ms</p>
+				<div class="card-content">
+					{#if safeTimedResource.loading}
+						<div class="timing-indicator">
+							<span class="spinner"></span>
+							<span>Racing against 500ms limit...</span>
+						</div>
+					{:else if safeTimedResource.ready}
+						{@const result = safeTimedResource.current}
+						{#if 'status' in result && result.status === 'timeout'}
+							<div class="timing-result timeout">
+								⏱️ {result.message}
+							</div>
+						{:else}
+							<div class="timing-result success">
+								✓ Completed in time!
+							</div>
+						{/if}
+					{/if}
+				</div>
+			</Boundary>
+		</section>
+
+		<!-- 14. DELAY -->
+		<section class="card">
+			<Boundary>
+				{@const fastResource = getFast()}
+				{@const delayedResource = delay(fastResource, 800)}
+				{@const refresh = () => fastResource.refresh()}
+				<div class="card-header">
+					<h2>delay()</h2>
+					<span class="helper-tag">Timing</span>
+					{#if delayedResource.loading}
+						<button class="status-mini status-loading" onclick={refresh} aria-label="Loading"><span class="spinner"></span></button>
+					{:else}
+						<button class="status-mini status-success" onclick={refresh} aria-label="Refresh">↻</button>
+					{/if}
+				</div>
+				<p class="card-desc">Fast query (~200ms) with 800ms minimum loading time</p>
+				<div class="card-content">
+					<div class="delay-comparison">
+						<div class="delay-bar">
+							<span class="delay-label">Original</span>
+							<div class="delay-track">
+								<div class="delay-fill" class:complete={fastResource.ready}>
+									{#if fastResource.loading}<span class="spinner small"></span>{:else}✓{/if}
+								</div>
+							</div>
+						</div>
+						<div class="delay-bar">
+							<span class="delay-label">+800ms</span>
+							<div class="delay-track">
+								<div class="delay-fill delayed" class:complete={delayedResource.ready}>
+									{#if delayedResource.loading}<span class="spinner small"></span>{:else}✓{/if}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</Boundary>
+		</section>
 	</div>
 
 	<section class="helper-legend">
@@ -438,6 +520,8 @@
 			<div class="legend-item"><code>chain</code> Dependent queries</div>
 			<div class="legend-item"><code>transform</code> Success/error</div>
 			<div class="legend-item"><code>withDefault</code> Loading defaults</div>
+			<div class="legend-item"><code>timeout</code> Time limits</div>
+			<div class="legend-item"><code>delay</code> Min loading time</div>
 		</div>
 	</section>
 </div>
@@ -784,6 +868,76 @@
 		border-radius: 999px;
 		font-size: 0.85rem;
 		width: fit-content;
+	}
+
+	.timing-indicator {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: var(--text-secondary);
+	}
+
+	.timing-result {
+		padding: 0.75rem;
+		border-radius: 4px;
+		font-size: 0.9rem;
+	}
+
+	.timing-result.timeout {
+		background: rgba(251, 191, 36, 0.1);
+		color: #fbbf24;
+	}
+
+	.timing-result.success {
+		background: rgba(74, 222, 128, 0.1);
+		color: var(--success);
+	}
+
+	.delay-comparison {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.delay-bar {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.delay-label {
+		font-size: 0.8rem;
+		color: var(--text-muted);
+		min-width: 60px;
+	}
+
+	.delay-track {
+		flex: 1;
+		height: 28px;
+		background: var(--bg-tertiary);
+		border-radius: 4px;
+		overflow: hidden;
+	}
+
+	.delay-fill {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--bg-tertiary);
+		color: var(--text-muted);
+		transition: all 0.3s ease;
+	}
+
+	.delay-fill.complete {
+		background: var(--success);
+		color: white;
+	}
+
+	.spinner.small {
+		width: 14px;
+		height: 14px;
+		border-width: 2px;
 	}
 
 	.helper-legend {

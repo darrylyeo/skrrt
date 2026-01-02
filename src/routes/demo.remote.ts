@@ -105,6 +105,15 @@ export const getSlow = query(async () => {
 	return { source: 'slow', timestamp: Date.now(), latency: Math.floor(Math.random() * 200) }
 })
 
+/**
+ * A very slow query - resolves in ~2250ms with wide variance (1500-3000ms)
+ * Used to demonstrate timeout behavior
+ */
+export const getVerySlowData = query(async () => {
+	await delay(1500 + Math.random() * 1500)
+	return { source: 'very-slow', timestamp: Date.now(), latency: Math.floor(1500 + Math.random() * 1500) }
+})
+
 const SUCCESS_MESSAGES = [
 	'Operation completed successfully',
 	'All systems operational',

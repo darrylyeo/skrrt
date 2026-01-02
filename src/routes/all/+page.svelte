@@ -62,9 +62,9 @@ const combined = all([getUsers(), getProducts(), getStocks()])
 							</div>
 						</div>
 
-						<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+						<div class="grid-3 mt-lg">
 							<div>
-								<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Users</h4>
+								<h4 class="subsection-title">Users</h4>
 								<div class="item-list">
 									{#each users.slice(0, 3) as user}
 										<div class="item">
@@ -76,7 +76,7 @@ const combined = all([getUsers(), getProducts(), getStocks()])
 								</div>
 							</div>
 							<div>
-								<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Products</h4>
+								<h4 class="subsection-title">Products</h4>
 								<div class="item-list">
 									{#each products.slice(0, 3) as product}
 										<div class="item">
@@ -89,13 +89,13 @@ const combined = all([getUsers(), getProducts(), getStocks()])
 								</div>
 							</div>
 							<div>
-								<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Stocks</h4>
+								<h4 class="subsection-title">Stocks</h4>
 								<div class="item-list">
 									{#each stocks as stock}
 										<div class="item">
 											<div class="item-content">
 												<div class="item-title">{stock.symbol}</div>
-												<div class="item-subtitle" style="color: {stock.change > 0 ? 'var(--accent-primary)' : 'var(--accent-tertiary)'}">
+												<div class="item-subtitle" class:text-primary={stock.change > 0} class:text-error={stock.change <= 0}>
 													{stock.change > 0 ? '+' : ''}{stock.change}%
 												</div>
 											</div>

@@ -71,7 +71,7 @@ const result = transform(getFailure(), {
 									<div class="data-grid">
 										<div class="data-row">
 											<span class="data-label">Type</span>
-											<span class="data-value" style="color: {failedTransformed.current?.type === 'error' ? 'var(--accent-tertiary)' : 'var(--accent-primary)'}">
+											<span class="data-value" class:text-error={failedTransformed.current?.type === 'error'} class:text-primary={failedTransformed.current?.type !== 'error'}>
 												{failedTransformed.current?.type}
 											</span>
 										</div>
@@ -93,7 +93,7 @@ const result = transform(getFailure(), {
 									<div class="data-grid">
 										<div class="data-row">
 											<span class="data-label">Type</span>
-											<span class="data-value" style="color: var(--accent-primary)">
+											<span class="data-value text-primary">
 												{successTransformed.current?.type}
 											</span>
 										</div>
@@ -112,8 +112,8 @@ const result = transform(getFailure(), {
 							</div>
 
 							{#if maybeTransformed.ready}
-								<div style="margin-top: 1.5rem;">
-									<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Maybe Transformed (seed: 3, should succeed)</h4>
+								<div class="mt-lg">
+									<h4 class="subsection-title">Maybe Transformed (seed: 3, should succeed)</h4>
 									<div class="data-grid">
 										<div class="data-row">
 											<span class="data-label">Status</span>

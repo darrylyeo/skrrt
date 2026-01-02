@@ -29,7 +29,7 @@
 	)
 
 	const allStocksReady = $derived(
-		all(stockResources as const)
+		all(stockResources)
 	)
 
 	const pollingStatus = $derived(
@@ -468,28 +468,6 @@
 	.empty {
 		color: var(--text-muted);
 		font-style: italic;
-	}
-
-	.error-boundary {
-		padding: 2rem;
-		background: rgba(255, 107, 107, 0.1);
-		border: 1px solid var(--error-color);
-		border-radius: var(--border-radius);
-		margin-top: 1.5rem;
-	}
-
-	.error-boundary p {
-		color: var(--error-color);
-		margin-bottom: 1rem;
-	}
-
-	.error-boundary pre {
-		background: var(--bg-tertiary);
-		padding: 1rem;
-		border-radius: 4px;
-		overflow-x: auto;
-		margin-bottom: 1rem;
-		font-size: 0.85rem;
 	}
 </style>
 

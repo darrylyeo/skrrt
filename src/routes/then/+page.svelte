@@ -57,11 +57,11 @@ const firstUser = derive(users, users => users[0])`}</code></pre>
 							</div>
 						</div>
 
-						<h4 style="margin: 1.5rem 0 1rem; color: var(--text-secondary);">User Names</h4>
+						<h4 class="subsection-title spaced">User Names</h4>
 						<div class="item-list">
 							{#each userNames.current ?? [] as name, i}
 								<div class="item">
-									<div class="item-icon" style="background: var(--accent-primary); color: var(--bg-primary);">
+									<div class="item-icon primary">
 										{i + 1}
 									</div>
 									<div class="item-content">

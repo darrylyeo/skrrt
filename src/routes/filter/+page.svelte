@@ -46,13 +46,13 @@ const inactiveUsers = filter(users, u => !u.active)`}</code></pre>
 			<div class="demo-box">
 				{#if activeUsers.ready}
 					<div class="fade-in">
-						<div class="comparison" style="margin-bottom: 1.5rem;">
+						<div class="comparison mb-lg">
 							<div class="comparison-item">
 								<div class="comparison-label">Active Users ({activeUsers.current?.length})</div>
 								<div class="item-list">
 									{#each activeUsers.current ?? [] as user}
 										<div class="item">
-											<div class="item-icon" style="background: var(--accent-primary); color: var(--bg-primary);">✓</div>
+											<div class="item-icon primary">✓</div>
 											<div class="item-content">
 												<div class="item-title">{user.name}</div>
 												<div class="item-subtitle">{user.email}</div>
@@ -66,7 +66,7 @@ const inactiveUsers = filter(users, u => !u.active)`}</code></pre>
 								<div class="item-list">
 									{#each inactiveUsers.current ?? [] as user}
 										<div class="item">
-											<div class="item-icon" style="background: var(--text-muted); color: var(--bg-primary);">✗</div>
+											<div class="item-icon muted">✗</div>
 											<div class="item-content">
 												<div class="item-title">{user.name}</div>
 												<div class="item-subtitle">{user.email}</div>
@@ -77,7 +77,7 @@ const inactiveUsers = filter(users, u => !u.active)`}</code></pre>
 							</div>
 						</div>
 
-						<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">
+						<h4 class="subsection-title">
 							Emails containing 'a' ({emailContainsA.current?.length})
 						</h4>
 						<div class="item-list">
@@ -85,7 +85,7 @@ const inactiveUsers = filter(users, u => !u.active)`}</code></pre>
 								<div class="item">
 									<div class="item-content">
 										<div class="item-title">{user.name}</div>
-										<div class="item-subtitle" style="font-family: var(--font-mono);">{user.email}</div>
+										<div class="item-subtitle mono">{user.email}</div>
 									</div>
 								</div>
 							{/each}

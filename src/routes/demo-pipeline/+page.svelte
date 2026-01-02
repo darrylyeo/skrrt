@@ -174,7 +174,7 @@
 </script>
 
 <PageBoundary title="Datagrid: Reactive Table">
-	<div class="page" style="max-width: 1400px;">
+	<div class="page wide">
 		<a href="/" class="page-back">← Back to Home</a>
 
 		<header class="page-header">

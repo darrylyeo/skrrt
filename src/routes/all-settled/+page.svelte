@@ -54,10 +54,7 @@ const results = allSettled([
 					<div class="fade-in item-list">
 						{#each results.current ?? [] as result, i}
 							<div class="item">
-								<div
-									class="item-icon"
-									style="background: {result.ready ? 'var(--accent-primary)' : 'var(--accent-tertiary)'}; color: var(--bg-primary);"
-								>
+								<div class="item-icon" class:primary={result.ready} class:tertiary={!result.ready}>
 									{result.ready ? '✓' : '✗'}
 								</div>
 								<div class="item-content">
@@ -79,13 +76,13 @@ const results = allSettled([
 
 					{@const succeeded = (results.current ?? []).filter(r => r.ready).length}
 					{@const failed = (results.current ?? []).filter(r => !r.ready).length}
-					<div class="stats-grid" style="margin-top: 1.5rem;">
+					<div class="stats-grid mt-lg">
 						<div class="stat">
-							<div class="stat-value" style="color: var(--accent-primary);">{succeeded}</div>
+							<div class="stat-value text-primary">{succeeded}</div>
 							<div class="stat-label">Ready</div>
 						</div>
 						<div class="stat">
-							<div class="stat-value" style="color: var(--accent-tertiary);">{failed}</div>
+							<div class="stat-value text-error">{failed}</div>
 							<div class="stat-label">Errored</div>
 						</div>
 					</div>

@@ -52,7 +52,7 @@ const recovered = catchError(failingQuery, error => ({
 
 			<div class="comparison">
 				<div class="demo-box">
-					<h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Failing Query (Recovered)</h4>
+					<h4 class="subsection-title">Failing Query (Recovered)</h4>
 					{#if recovered.ready}
 						<div class="fade-in data-grid">
 							<div class="data-row">
@@ -74,7 +74,7 @@ const recovered = catchError(failingQuery, error => ({
 				</div>
 
 				<div class="demo-box">
-					<h4 style="color: var(--text-secondary); margin-bottom: 1rem;">Success Query (Unchanged)</h4>
+					<h4 class="subsection-title">Success Query (Unchanged)</h4>
 					{#if successUnchanged.ready}
 						<div class="fade-in data-grid">
 							<div class="data-row">

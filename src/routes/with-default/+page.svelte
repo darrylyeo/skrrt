@@ -44,7 +44,7 @@ const users = withDefault(getUsers(), [])
 			</div>
 
 			<div class="demo-box">
-				<div class="comparison" style="margin-bottom: 1.5rem;">
+				<div class="comparison mb-lg">
 					<div class="comparison-item">
 						<div class="comparison-label">Regular Resource</div>
 						<div class="data-grid">
@@ -68,7 +68,7 @@ const users = withDefault(getUsers(), [])
 						<div class="data-grid">
 							<div class="data-row">
 								<span class="data-label">ready</span>
-								<span class="data-value" style="color: var(--accent-primary);">{usersWithDefault.ready}</span>
+								<span class="data-value text-primary">{usersWithDefault.ready}</span>
 							</div>
 							<div class="data-row">
 								<span class="data-label">loading</span>
@@ -82,18 +82,18 @@ const users = withDefault(getUsers(), [])
 					</div>
 				</div>
 
-				<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">
+				<h4 class="subsection-title">
 					Users List (always renderable)
 				</h4>
 				{#if usersWithDefault.current?.length === 0}
-					<div class="item" style="color: var(--text-muted);">
+					<div class="item text-muted">
 						Loading users...
 					</div>
 				{:else}
 					<div class="item-list">
 						{#each usersWithDefault.current ?? [] as user}
 							<div class="item">
-								<div class="item-icon" style="background: var(--accent-secondary); color: white;">
+								<div class="item-icon secondary">
 									{user.name[0]}
 								</div>
 								<div class="item-content">
@@ -108,11 +108,11 @@ const users = withDefault(getUsers(), [])
 					</div>
 				{/if}
 
-				<div style="margin-top: 1.5rem;">
-					<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">
+				<div class="mt-lg">
+					<h4 class="subsection-title">
 						Price Total (computed from default while loading)
 					</h4>
-					<div class="stat" style="display: inline-block;">
+					<div class="stat stat-inline">
 						<div class="stat-value">${total.current?.toFixed(2)}</div>
 						<div class="stat-label">{prices.loading ? 'Loading...' : 'Total'}</div>
 					</div>

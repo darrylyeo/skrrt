@@ -73,6 +73,18 @@
 			href: '/chain'
 		},
 		{
+			icon: '⏱️',
+			title: 'timeout',
+			description: 'Fail if not ready in time',
+			href: '/timeout'
+		},
+		{
+			icon: '⏳',
+			title: 'delay',
+			description: 'Minimum loading time for smooth UX',
+			href: '/delay'
+		},
+		{
 			icon: '🧪',
 			title: 'pipe',
 			description: 'Effect-style composition',
@@ -155,7 +167,41 @@
 		</p>
 
 		<div class="feature-grid">
-			{#each features.slice(9, 13) as feature}
+			{#each features.slice(9, 12) as feature}
+				<a href={feature.href} class="feature-card">
+					<div class="feature-icon">{feature.icon}</div>
+					<div class="feature-title">{feature.title}</div>
+					<div class="feature-description">{feature.description}</div>
+				</a>
+			{/each}
+		</div>
+	</section>
+
+	<section class="section">
+		<h2>Timing Helpers</h2>
+		<p class="section-description">
+			Control timing behavior for better UX guarantees.
+		</p>
+
+		<div class="feature-grid">
+			{#each features.slice(12, 14) as feature}
+				<a href={feature.href} class="feature-card">
+					<div class="feature-icon">{feature.icon}</div>
+					<div class="feature-title">{feature.title}</div>
+					<div class="feature-description">{feature.description}</div>
+				</a>
+			{/each}
+		</div>
+	</section>
+
+	<section class="section">
+		<h2>Composition</h2>
+		<p class="section-description">
+			Advanced composition patterns for complex data flows.
+		</p>
+
+		<div class="feature-grid">
+			{#each features.slice(14, 15) as feature}
 				<a href={feature.href} class="feature-card">
 					<div class="feature-icon">{feature.icon}</div>
 					<div class="feature-title">{feature.title}</div>
@@ -172,7 +218,7 @@
 		</p>
 
 		<div class="feature-grid">
-			{#each features.slice(13) as feature}
+			{#each features.slice(15) as feature}
 				<a href={feature.href} class="feature-card">
 					<div class="feature-icon">{feature.icon}</div>
 					<div class="feature-title">{feature.title}</div>

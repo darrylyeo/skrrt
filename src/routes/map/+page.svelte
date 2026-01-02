@@ -47,9 +47,9 @@ const formattedPrices = map(prices, p => \`$\${p.toFixed(2)}\`)`}</code></pre>
 
 			<div class="demo-box">
 				{#if userNames.ready}
-					<div class="fade-in" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+					<div class="fade-in grid-3">
 						<div>
-							<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Names</h4>
+							<h4 class="subsection-title">Names</h4>
 							<div class="item-list">
 								{#each userNames.current ?? [] as name}
 									<div class="item">
@@ -61,24 +61,24 @@ const formattedPrices = map(prices, p => \`$\${p.toFixed(2)}\`)`}</code></pre>
 							</div>
 						</div>
 						<div>
-							<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Emails</h4>
+							<h4 class="subsection-title">Emails</h4>
 							<div class="item-list">
 								{#each userEmails.current ?? [] as email}
 									<div class="item">
 										<div class="item-content">
-											<div class="item-title" style="font-family: var(--font-mono); font-size: 0.85rem;">{email}</div>
+											<div class="item-title mono email-text">{email}</div>
 										</div>
 									</div>
 								{/each}
 							</div>
 						</div>
 						<div>
-							<h4 style="color: var(--text-secondary); margin-bottom: 0.75rem;">Prices</h4>
+							<h4 class="subsection-title">Prices</h4>
 							<div class="item-list">
 								{#each formattedPrices.current ?? [] as price}
 									<div class="item">
 										<div class="item-content">
-											<div class="item-title" style="color: var(--accent-primary); font-family: var(--font-mono);">{price}</div>
+											<div class="item-title mono text-primary">{price}</div>
 										</div>
 									</div>
 								{/each}
