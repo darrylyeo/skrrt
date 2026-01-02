@@ -1,6 +1,13 @@
 {
-	"name": "sveltekit-remote-resources",
+	"name": "skrrt",
 	"version": "0.0.1",
+	"description": "SvelteKit Reactive Resource Tools – utilities for composing and deriving reactive `RemoteResource` objects from SvelteKit Remote Functions",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/darrylyeo/skrrt.git"
+	},
+	"license": "MIT",
+	"author": "Darryl Yeo",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && svelte-kit sync && svelte-package && publint",
@@ -8,7 +15,9 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"prepack": "svelte-kit sync && svelte-package && publint",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"publish:npm": "npm publish --access public",
+		"publish:jsr": "deno publish"
 	},
 	"files": [
 		"dist",

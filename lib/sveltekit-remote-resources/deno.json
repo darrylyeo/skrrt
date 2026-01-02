@@ -1,0 +1,19 @@
+{
+	"name": "@your-scope/sveltekit-remote-resources",
+	"version": "0.0.1",
+	"exports": {
+		".": "./src/lib/index.ts",
+		"./RemoteResource": "./src/lib/RemoteResource.svelte.ts",
+		"./RemoteResourcePipeline": "./src/lib/RemoteResourcePipeline.svelte.ts"
+	},
+	"publish": {
+		"include": [
+			"src/lib/**/*.ts",
+			"README.md"
+		],
+		"exclude": [
+			"src/lib/**/*.test.*",
+			"src/lib/**/*.spec.*"
+		]
+	}
+}
