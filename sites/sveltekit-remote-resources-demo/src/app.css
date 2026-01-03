@@ -1,7 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-	--font-body: 'Outfit', system-ui, sans-serif;
+	--font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+	--font-display: 'Racing Sans One', system-ui, sans-serif;
 	--font-mono: 'JetBrains Mono', monospace;
 
 	--bg-primary: #0a0a0f;
@@ -13,10 +14,10 @@
 	--text-secondary: #a0a0b0;
 	--text-muted: #606070;
 
-	--accent-primary: #00d4aa;
-	--accent-secondary: #7b61ff;
-	--accent-tertiary: #ff6b6b;
-	--accent-warning: #ffc107;
+	--accent-primary: #d97706;
+	--accent-secondary: #f59e0b;
+	--accent-tertiary: #ea580c;
+	--accent-warning: #fbbf24;
 
 	--border-color: #2a2a35;
 	--border-radius: 12px;
@@ -45,8 +46,8 @@ html, body {
 
 body {
 	background:
-		radial-gradient(ellipse at 20% 0%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
-		radial-gradient(ellipse at 80% 100%, rgba(123, 97, 255, 0.08) 0%, transparent 50%),
+		radial-gradient(ellipse at 20% 0%, rgba(217, 119, 6, 0.08) 0%, transparent 50%),
+		radial-gradient(ellipse at 80% 100%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
 		var(--bg-primary);
 }
 
@@ -114,11 +115,11 @@ h3 {
 /* Layout */
 .layout {
 	display: grid;
-	grid-template-columns: 200px 1fr;
+	grid-template-columns: 14rem 1fr;
 	min-height: 100vh;
 }
 
-.sidebar {
+.nav {
 	background: var(--bg-secondary);
 	border-right: 1px solid var(--border-color);
 	padding: 2rem 1rem;
@@ -129,11 +130,11 @@ h3 {
 }
 
 
-.sidebar-section {
+.nav-section {
 	margin-bottom: 1.5rem;
 }
 
-.sidebar-section-title {
+.nav-section-title {
 	font-size: 0.7rem;
 	font-weight: 600;
 	text-transform: uppercase;
@@ -143,12 +144,12 @@ h3 {
 	margin-bottom: 0.5rem;
 }
 
-.sidebar-nav {
+.nav-links {
 	display: grid;
 	gap: 2px;
 }
 
-.sidebar-link {
+.nav-link {
 	display: block;
 	padding: 0.6rem 0.75rem;
 	color: var(--text-secondary);
@@ -157,13 +158,13 @@ h3 {
 	transition: all var(--transition-fast);
 }
 
-.sidebar-link:hover {
+.nav-link:hover {
 	background: var(--bg-hover);
 	color: var(--text-primary);
 }
 
-.sidebar-link.active {
-	background: linear-gradient(135deg, rgba(0, 212, 170, 0.15) 0%, rgba(123, 97, 255, 0.1) 100%);
+.nav-link.active {
+	background: linear-gradient(135deg, rgba(217, 119, 6, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
 	color: var(--accent-primary);
 }
 
@@ -255,17 +256,17 @@ h3 {
 }
 
 .status-loading {
-	background: rgba(123, 97, 255, 0.15);
+	background: rgba(245, 158, 11, 0.15);
 	color: var(--accent-secondary);
 }
 
 .status-loading:hover {
-	background: rgba(123, 97, 255, 0.25);
+	background: rgba(245, 158, 11, 0.25);
 }
 
 .status-success {
 	background: rgba(0, 212, 170, 0.15);
-	color: var(--accent-primary);
+	color: #00d4aa;
 }
 
 .status-success:hover {
@@ -381,7 +382,7 @@ h3 {
 
 .badge-success {
 	background: rgba(0, 212, 170, 0.2);
-	color: var(--accent-primary);
+	color: #00d4aa;
 }
 
 .badge-error {
@@ -416,6 +417,11 @@ h3 {
 .page-description {
 	color: var(--text-secondary);
 	font-size: 1.05rem;
+	margin-bottom: 1rem;
+}
+
+.page-description:last-child {
+	margin-bottom: 0;
 }
 
 .page-back {
