@@ -987,3 +987,75 @@ export const delay = <_Value>(
 		[Symbol.toStringTag]: 'RemoteResource',
 	}
 }
+
+// ============================================================================
+// PROXY HELPERS
+// ============================================================================
+
+const remoteResourceProperties = new Set([
+	'current',
+	'loading',
+	'ready',
+	'error',
+	'then',
+	'catch',
+	'finally',
+	Symbol.toStringTag,
+	Symbol.toPrimitive,
+])
+
+/**
+ * A proxied RemoteResource that allows accessing properties on the resource's value.
+ * When accessing a property that isn't a RemoteResource property, it returns a proxied RemoteResource
+ * for that property's value.
+ */
+export type ProxiedRemoteResource<_Value> = (
+	RemoteResource<_Value>
+	& (
+		_Value extends object ?
+			{
+				[K in keyof _Value as K extends keyof RemoteResource<_Value> ? never : K]: (
+					ProxiedRemoteResource<_Value[K]>
+				)
+			}
+		:
+			{}
+	)
+)
+
+/**
+ * Creates a proxy for a RemoteResource that allows accessing properties on the resource's value.
+ * When accessing a property that isn't a RemoteResource property, it returns a proxied RemoteResource
+ * for that property's value.
+ */
+export const proxy = <_Value>(
+	resource: RemoteResource<_Value>
+): ProxiedRemoteResource<_Value> => (
+	Proxy.revocable(
+		resource,
+		{
+			get(target, property, receiver) {
+				if (remoteResourceProperties.has(property as string | symbol)){
+					const value = Reflect.get(target, property, receiver)
+
+					return (
+						typeof value === 'function' ?
+							value.bind(target)
+						:
+							value
+					)
+				}
+
+				return proxy(
+					derive(
+						target,
+						(value: _Value) => (
+							value[property as keyof _Value] as Awaited<_Value[keyof _Value]>
+						)
+					)
+				)
+			}
+		}
+	)
+		.proxy
+)
